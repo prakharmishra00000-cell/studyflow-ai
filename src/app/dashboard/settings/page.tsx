@@ -2,12 +2,11 @@
 
 import React, { useState } from 'react';
 import { useStudyStore } from '@/lib/store/StudyContext';
-import { Settings, Key, RefreshCw, Save, Check } from 'lucide-react';
+import { Settings, Sparkles, RefreshCw, Save, Check, ShieldCheck } from 'lucide-react';
 
 export default function SettingsPage() {
   const { profile, updateProfile, resetToDemo } = useStudyStore();
 
-  const [apiKey, setApiKey] = useState<string>(profile.apiKey || '');
   const [name, setName] = useState<string>(profile.name);
   const [exam, setExam] = useState<string>(profile.exam);
   const [examDate, setExamDate] = useState<string>(profile.examDate);
@@ -19,13 +18,8 @@ export default function SettingsPage() {
       name,
       exam,
       examDate,
-      dailyStudyHours: dailyHours,
-      apiKey
+      dailyStudyHours: dailyHours
     });
-
-    if (apiKey) {
-      localStorage.setItem('studyflow_api_key', apiKey);
-    }
 
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 3000);
@@ -34,32 +28,33 @@ export default function SettingsPage() {
   return (
     <div className="max-w-3xl mx-auto space-y-8 animate-fadeIn">
       <div>
-        <h1 className="text-3xl font-extrabold text-white tracking-tight">Settings & AI Configuration</h1>
+        <h1 className="text-3xl font-extrabold text-white tracking-tight">Settings & System Profile</h1>
         <p className="text-xs text-slate-400 mt-1">
-          Manage your student profile, exam parameters, and Google Gemini API integration.
+          Manage your student profile, exam parameters, and daily study capacity.
         </p>
       </div>
 
       <div className="p-6 sm:p-8 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-6">
-        <h3 className="font-bold text-base text-white flex items-center gap-2">
-          <Key className="w-4 h-4 text-cyan-400" /> Google Gemini API Key Integration
-        </h3>
-
-        <div className="space-y-2">
-          <label className="text-xs font-bold text-slate-300">Gemini API Key</label>
-          <input
-            type="password"
-            placeholder="AIzaSy... (Leave empty to use Render ENV variable or Demo Heuristics)"
-            value={apiKey}
-            onChange={e => setApiKey(e.target.value)}
-            className="w-full p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-indigo-500"
-          />
-          <p className="text-[11px] text-slate-500">
-            If provided, StudyFlow AI will call Gemini 2.5 Flash for custom explanations and quizzes. You can also configure <code className="text-indigo-300">GEMINI_API_KEY</code> directly in your Render deployment environment variables!
-          </p>
+        {/* System AI Connection Banner */}
+        <div className="p-4 rounded-2xl bg-indigo-950/40 border border-indigo-500/30 flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-indigo-500/20 text-cyan-400">
+            <Sparkles className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="font-bold text-sm text-white">AI Engine Active</h3>
+              <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                <ShieldCheck className="w-3 h-3" /> Server Connected
+              </span>
+            </div>
+            <p className="text-xs text-slate-300 mt-0.5">
+              Powered by Google Gemini API via Render Environment Variables. All students get real-time AI recommendations, quizzes, and explanations automatically.
+            </p>
+          </div>
         </div>
 
-        <div className="border-t border-slate-800 pt-6 space-y-4">
+        {/* Student Profile Settings */}
+        <div className="space-y-4">
           <h3 className="font-bold text-base text-white">Student Profile Settings</h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -69,7 +64,7 @@ export default function SettingsPage() {
                 type="text"
                 value={name}
                 onChange={e => setName(e.target.value)}
-                className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none"
+                className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-indigo-500"
               />
             </div>
 
@@ -79,7 +74,7 @@ export default function SettingsPage() {
                 type="text"
                 value={exam}
                 onChange={e => setExam(e.target.value)}
-                className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none"
+                className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-indigo-500"
               />
             </div>
 
@@ -89,7 +84,7 @@ export default function SettingsPage() {
                 type="date"
                 value={examDate}
                 onChange={e => setExamDate(e.target.value)}
-                className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none"
+                className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-indigo-500"
               />
             </div>
 
@@ -99,7 +94,7 @@ export default function SettingsPage() {
                 type="number"
                 value={dailyHours}
                 onChange={e => setDailyHours(parseInt(e.target.value) || 1)}
-                className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none"
+                className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-indigo-500"
               />
             </div>
           </div>
@@ -108,14 +103,14 @@ export default function SettingsPage() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-800">
           <button
             onClick={resetToDemo}
-            className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center justify-center gap-1.5"
+            className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
           >
             <RefreshCw className="w-4 h-4" /> Reset Demo State (Prakhar Profile)
           </button>
 
           <button
             onClick={handleSave}
-            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-indigo-600/30"
+            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-indigo-600/30 transition-all"
           >
             {savedSuccess ? <Check className="w-4 h-4 text-cyan-300" /> : <Save className="w-4 h-4" />}
             <span>{savedSuccess ? 'Settings Saved!' : 'Save Settings'}</span>
