@@ -9,26 +9,21 @@ import {
   Zap, 
   BookOpen, 
   HelpCircle, 
-  RotateCcw, 
   AlertCircle, 
-  Target, 
   Bot, 
-  Clock, 
   Settings,
-  Sparkles
+  Sparkles,
+  FileCode
 } from 'lucide-react';
 
 const NAV_ITEMS = [
   { label: 'Home', href: '/dashboard', icon: Home },
   { label: 'Study Now', href: '/dashboard/study-now', icon: Zap, highlight: true },
   { label: 'My Plan', href: '/dashboard/plan', icon: CalendarDays },
-  { label: 'Syllabus', href: '/dashboard/syllabus', icon: BookOpen },
-  { label: 'Quizzes', href: '/dashboard/quizzes', icon: HelpCircle },
-  { label: 'Revision', href: '/dashboard/revision', icon: RotateCcw },
-  { label: 'Mistakes', href: '/dashboard/mistakes', icon: AlertCircle },
-  { label: 'Focus Mode', href: '/dashboard/focus', icon: Target },
+  { label: 'Formula Cheat Sheets', href: '/dashboard/formulas', icon: FileCode },
+  { label: 'Quizzes & Practice', href: '/dashboard/quizzes', icon: HelpCircle },
+  { label: 'Mistakes Book', href: '/dashboard/mistakes', icon: AlertCircle },
   { label: 'AI Copilot', href: '/dashboard/copilot', icon: Bot },
-  { label: 'Commitments', href: '/dashboard/commitments', icon: Clock },
   { label: 'Settings', href: '/dashboard/settings', icon: Settings },
 ];
 
@@ -84,7 +79,7 @@ export default function Sidebar() {
           </span>
         </div>
         <p className="text-slate-500 text-[10px] leading-relaxed">
-          Continuously evaluating exam date, weakness & forgetting risk.
+          Continuously evaluating exam date, weakness & study history.
         </p>
       </div>
     </aside>
