@@ -22,6 +22,12 @@ export type RevisionRisk = 'Fresh' | 'Due Soon' | 'Needs Revision' | 'High Risk'
 export type SessionCompletion = 'completed' | 'partially' | 'skipped';
 export type UnderstandingRating = 'poor' | 'okay' | 'good' | 'excellent';
 
+// Learning Brain State
+export type BrainState = 'Mastered' | 'Strong' | 'Learning' | 'Needs Practice' | 'Needs Review' | 'Not Started';
+
+// Teacher Modes
+export type TeacherMode = 'explainer' | 'examiner' | 'socratic' | 'solver' | 'coach';
+
 export interface UserProfile {
   id: string;
   name: string;
@@ -37,7 +43,7 @@ export interface UserProfile {
   level: number;
   badges: Badge[];
   hasCompletedOnboarding: boolean;
-  apiKey?: string;
+  teacherMode?: TeacherMode;
 }
 
 export interface Badge {
@@ -64,11 +70,20 @@ export interface Topic {
   importance: number; // 1-10
   difficulty: number; // 1-5
   mastery: number; // 0-100%
-  lastStudied?: string; // ISO date string
-  nextRevision?: string; // ISO date string
+  brainState?: BrainState;
+  lastStudied?: string;
+  nextRevision?: string;
   revisionRisk: RevisionRisk;
   mistakeCount: number;
   totalTimeSpentMinutes: number;
+  summaryNote?: string;
+}
+
+export interface Quiz {
+  id: string;
+  topicId: string;
+  topicName: string;
+  questions: QuizQuestion[];
 }
 
 export interface Recommendation {
@@ -101,8 +116,8 @@ export interface StudyPlanTask {
 }
 
 export interface DailyPlan {
-  date: string; // YYYY-MM-DD
-  label: string; // Today, Tomorrow, Monday, etc.
+  date: string;
+  label: string;
   tasks: StudyPlanTask[];
   isAdjusted?: boolean;
 }
@@ -114,19 +129,6 @@ export interface QuizQuestion {
   options?: string[];
   correctAnswer: string;
   explanation: string;
-}
-
-export interface Quiz {
-  id: string;
-  subjectId: string;
-  subjectName: string;
-  topicId: string;
-  topicName: string;
-  title: string;
-  questions: QuizQuestion[];
-  score?: number;
-  totalQuestions: number;
-  completedAt?: string;
 }
 
 export interface Mistake {
@@ -149,8 +151,8 @@ export interface Commitment {
   id: string;
   title: string;
   category: 'college' | 'coaching' | 'work' | 'gym' | 'travel' | 'sleep' | 'other';
-  startTime: string; // HH:mm
-  endTime: string;   // HH:mm
+  startTime: string;
+  endTime: string;
   durationHours: number;
 }
 
@@ -158,4 +160,36 @@ export interface SyllabusItem {
   subject: string;
   unit: string;
   topics: string[];
+}
+
+export interface ConceptNode {
+  id: string;
+  label: string;
+  parentId?: string;
+  description: string;
+  formula?: string;
+  examples?: string[];
+  mastery: number;
+  brainState: BrainState;
+}
+
+export interface ProgressiveHint {
+  hint1: string; // Conceptual clue
+  hint2: string; // Formula/concept
+  hint3: string; // Strategy/approach
+  stepByStep: string; // Walkthrough
+  answer: string; // Full solution
+}
+
+export interface ExamReadiness {
+  percentage: number;
+  strongSubjects: string[];
+  improvingSubjects: string[];
+  needsAttentionSubjects: string[];
+  criticalTopics: string[];
+  nextBestAction: {
+    topicName: string;
+    actionText: string;
+    recommendedDuration: number;
+  };
 }

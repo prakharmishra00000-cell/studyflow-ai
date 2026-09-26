@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Zap, CalendarDays, HelpCircle, MoreHorizontal, BookOpen, RotateCcw, AlertCircle, Target, Bot, Settings, X } from 'lucide-react';
+import { Home, Zap, Route, HelpCircle, MoreHorizontal, BookOpen, ShieldCheck, UserCheck, AlertCircle, Settings, X, Network } from 'lucide-react';
 
 export default function MobileNav() {
   const pathname = usePathname();
@@ -23,13 +23,13 @@ export default function MobileNav() {
         </Link>
 
         <Link
-          href="/dashboard/plan"
+          href="/dashboard/learn/path"
           className={`flex flex-col items-center gap-1 ${
-            pathname === '/dashboard/plan' ? 'text-indigo-400' : 'text-slate-400'
+            pathname === '/dashboard/learn/path' ? 'text-indigo-400' : 'text-slate-400'
           }`}
         >
-          <CalendarDays className="w-5 h-5" />
-          <span className="text-[10px] font-medium">Plan</span>
+          <Route className="w-5 h-5" />
+          <span className="text-[10px] font-medium">Path</span>
         </Link>
 
         {/* Central Glowing "Study Now" Action */}
@@ -71,25 +71,25 @@ export default function MobileNav() {
             </div>
 
             <div className="grid grid-cols-2 gap-3 text-xs">
-              <Link href="/dashboard/syllabus" onClick={() => setShowMore(false)} className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2.5 text-slate-300">
-                <BookOpen className="w-4 h-4 text-cyan-400" />
-                <span>Syllabus</span>
+              <Link href="/dashboard/progress/readiness" onClick={() => setShowMore(false)} className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2.5 text-slate-300">
+                <ShieldCheck className="w-4 h-4 text-cyan-400" />
+                <span>Exam Readiness</span>
               </Link>
-              <Link href="/dashboard/revision" onClick={() => setShowMore(false)} className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2.5 text-slate-300">
-                <RotateCcw className="w-4 h-4 text-amber-400" />
-                <span>Revision</span>
+              <Link href="/dashboard/teacher" onClick={() => setShowMore(false)} className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2.5 text-slate-300">
+                <UserCheck className="w-4 h-4 text-purple-400" />
+                <span>AI Teacher</span>
+              </Link>
+              <Link href="/dashboard/learn/concept-map" onClick={() => setShowMore(false)} className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2.5 text-slate-300">
+                <Network className="w-4 h-4 text-indigo-400" />
+                <span>Concept Map</span>
+              </Link>
+              <Link href="/dashboard/learn/material" onClick={() => setShowMore(false)} className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2.5 text-slate-300">
+                <BookOpen className="w-4 h-4 text-emerald-400" />
+                <span>Study Material</span>
               </Link>
               <Link href="/dashboard/mistakes" onClick={() => setShowMore(false)} className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2.5 text-slate-300">
                 <AlertCircle className="w-4 h-4 text-rose-400" />
-                <span>Mistakes</span>
-              </Link>
-              <Link href="/dashboard/focus" onClick={() => setShowMore(false)} className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2.5 text-slate-300">
-                <Target className="w-4 h-4 text-emerald-400" />
-                <span>Focus Mode</span>
-              </Link>
-              <Link href="/dashboard/copilot" onClick={() => setShowMore(false)} className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2.5 text-slate-300">
-                <Bot className="w-4 h-4 text-indigo-400" />
-                <span>AI Copilot</span>
+                <span>Mistakes Book</span>
               </Link>
               <Link href="/dashboard/settings" onClick={() => setShowMore(false)} className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2.5 text-slate-300">
                 <Settings className="w-4 h-4 text-slate-400" />

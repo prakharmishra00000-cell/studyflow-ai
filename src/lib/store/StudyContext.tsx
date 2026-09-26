@@ -213,9 +213,9 @@ export const StudyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     // 3. Build Topic objects
     const newTopics: Topic[] = [];
-    researched.forEach((res, sIdx) => {
+    researched.forEach((res: { subject: string; topics: Array<{ name: string; importance?: number; difficulty?: number }> }, sIdx: number) => {
       const parentSub = newSubjects.find(s => s.name.toLowerCase() === res.subject.toLowerCase()) || newSubjects[sIdx] || newSubjects[0];
-      res.topics.forEach((t, tIdx) => {
+      res.topics.forEach((t: { name: string; importance?: number; difficulty?: number }, tIdx: number) => {
         const isWeak = weakSubs.includes(parentSub.name);
         newTopics.push({
           id: `top-custom-${sIdx}-${tIdx}`,

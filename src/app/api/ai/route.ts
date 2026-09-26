@@ -7,9 +7,24 @@ export const dynamic = 'force-dynamic';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { action, prompt, context, subjectName, topicName, questionCount, difficulty, rawText, paperText, subjects, examName } = body;
+    const { action, prompt, mode, context, subjectName, topicName, questionCount, difficulty, rawText, paperText, subjects, examName, questionText, userAnswer } = body;
 
     const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+
+    if (action === 'teacherRespond') {
+      const reply = await StudyAI.teacherRespond(prompt, mode || 'explainer', context, apiKey);
+      return NextResponse.json({ reply });
+    }
+
+    if (action === 'generateHints') {
+      const hints = await StudyAI.generateHints(questionText, userAnswer);
+      return NextResponse.json({ hints });
+    }
+
+    if (action === 'generateConceptMap') {
+      const nodes = await StudyAI.generateConceptMap(subjectName, topicName);
+      return NextResponse.json({ nodes });
+    }
 
     if (action === 'researchSyllabus') {
       const syllabus = await StudyAI.researchExamSyllabus(subjects || [], examName || 'Competitive Exam');
@@ -22,7 +37,7 @@ export async function POST(req: Request) {
     }
 
     if (action === 'generateQuiz') {
-      const questions = await StudyAI.generateQuiz(subjectName, topicName, questionCount, difficulty, apiKey);
+      const questions = await StudyAI.generateQuiz(subjectName, topicName, questionCount, difficulty);
       return NextResponse.json({ questions });
     }
 
@@ -32,7 +47,7 @@ export async function POST(req: Request) {
     }
 
     if (action === 'analyzePYQ') {
-      const analysis = await StudyAI.analyzePYQ(paperText, apiKey);
+      const analysis = await StudyAI.analyzePYQ(paperText);
       return NextResponse.json({ analysis });
     }
 
