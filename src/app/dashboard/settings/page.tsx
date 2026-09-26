@@ -42,13 +42,13 @@ export default function SettingsPage() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-bold text-sm text-white">AI Engine Active</h3>
+              <h3 className="font-bold text-sm text-white">Vercel AI Serverless Connected</h3>
               <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
-                <ShieldCheck className="w-3 h-3" /> Server Connected
+                <ShieldCheck className="w-3 h-3" /> Live
               </span>
             </div>
             <p className="text-xs text-slate-300 mt-0.5">
-              Powered by Google Gemini API via Render Environment Variables. All students get real-time AI recommendations, quizzes, and explanations automatically.
+              Powered by Google Gemini API via Vercel Environment Variable (<code className="text-cyan-400">GEMINI_API_KEY</code>). All students get real-time AI recommendations, quizzes, and explanations automatically.
             </p>
           </div>
         </div>
