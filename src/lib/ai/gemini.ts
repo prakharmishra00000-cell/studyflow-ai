@@ -1,9 +1,9 @@
 import { GoogleGenAI } from '@google/genai';
-import { SyllabusItem, QuizQuestion, Recommendation, PriorityLevel } from '../types';
+import { SyllabusItem, QuizQuestion } from '../types';
 
 export class StudyAI {
   private static getClient(apiKey?: string): GoogleGenAI | null {
-    const key = apiKey || process.env.GEMINI_API_KEY || (typeof window !== 'undefined' ? localStorage.getItem('studyflow_api_key') : undefined);
+    const key = apiKey || process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY || (typeof window !== 'undefined' ? localStorage.getItem('studyflow_api_key') : undefined);
     if (!key) return null;
     try {
       return new GoogleGenAI({ apiKey: key });
@@ -12,8 +12,29 @@ export class StudyAI {
     }
   }
 
+  private static async callServerApi(action: string, payload: any): Promise<any> {
+    if (typeof window !== 'undefined') {
+      try {
+        const res = await fetch('/api/ai', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action, ...payload })
+        });
+        if (res.ok) {
+          return await res.json();
+        }
+      } catch (err) {
+        console.warn('Server API call error:', err);
+      }
+    }
+    return null;
+  }
+
   // 1. Generate Study Copilot Response
   static async copilotRespond(prompt: string, context?: string, apiKey?: string): Promise<string> {
+    const serverResult = await this.callServerApi('copilot', { prompt, context });
+    if (serverResult?.reply) return serverResult.reply;
+
     const ai = this.getClient(apiKey);
     if (ai) {
       try {
@@ -27,44 +48,8 @@ Provide a clear, structured, encouraging answer using Markdown. Focus on clarity
         });
         if (response.text) return response.text;
       } catch (err) {
-        console.warn('Gemini API call failed, falling back to smart heuristic:', err);
+        console.warn('Gemini API call failed:', err);
       }
-    }
-
-    // Heuristic Fallback
-    const pLower = prompt.toLowerCase();
-    if (pLower.includes('entropy')) {
-      return `### ⚡ Entropy Explained Simply
-
-**Entropy** is essentially a measure of **disorder, randomness, or unavailable energy** in a thermodynamic system.
-
-#### Key Insights:
-1. **The Core Law (2nd Law of Thermodynamics)**:
-   - In any natural, spontaneous process, the total entropy of the universe **always increases** ($\Delta S_{total} > 0$).
-   - Heat flows spontaneously from hot to cold, increasing cosmic disorder.
-
-2. **Everyday Analogy**:
-   - Imagine a clean room. It takes effort to tidy it, but over time it naturally gets messy. The messy room is a higher entropy state!
-
-3. **Mathematical Formula**:
-   $$\Delta S = \int \frac{dQ_{rev}}{T}$$
-   Where $dQ_{rev}$ is reversible heat added and $T$ is absolute temperature in Kelvin.
-
-> 💡 **Quick Active Recall Question**: Does entropy decrease when water freezes into ice? *(Yes, locally! Water molecules form an ordered crystal lattice, but heat released increases surrounding entropy even more).*`;
-    }
-
-    if (pLower.includes('bernoulli')) {
-      return `### 🌊 Bernoulli's Theorem Explained
-
-**Bernoulli's Principle** states that for an incompressible, non-viscous fluid flowing along a streamline:
-
-$$\text{Pressure Energy} + \text{Kinetic Energy} + \text{Potential Energy} = \text{Constant}$$
-
-$$P + \frac{1}{2}\rho v^2 + \rho g h = \text{Constant}$$
-
-#### Real-World Examples:
-- **Airplane Wings (Aerofoil)**: Air moves faster over top $\rightarrow$ Lower pressure $\rightarrow$ Upward lift created!
-- **Atomizer Spray**: Fast air stream drops pressure, pulling liquid up the tube.`;
     }
 
     return `### 💡 STUDYFLOW AI Study Guide
@@ -90,6 +75,11 @@ Here is a clear breakdown for **"${prompt}"**:
     difficulty: string = 'Medium',
     apiKey?: string
   ): Promise<QuizQuestion[]> {
+    const serverResult = await this.callServerApi('generateQuiz', { subjectName, topicName, questionCount, difficulty });
+    if (serverResult?.questions && Array.isArray(serverResult.questions) && serverResult.questions.length > 0) {
+      return serverResult.questions;
+    }
+
     const ai = this.getClient(apiKey);
     if (ai) {
       try {
@@ -115,11 +105,10 @@ Format MUST be a valid JSON array of objects with schema:
           if (Array.isArray(parsed) && parsed.length > 0) return parsed;
         }
       } catch (err) {
-        console.warn('Gemini quiz generation failed, using structured fallback:', err);
+        console.warn('Gemini quiz generation failed:', err);
       }
     }
 
-    // Heuristic Fallback Quizzes
     return [
       {
         id: `q-${Date.now()}-1`,
@@ -128,44 +117,17 @@ Format MUST be a valid JSON array of objects with schema:
         options: ['It remains zero', 'It increases continuously', 'It decreases', 'It becomes infinite'],
         correctAnswer: 'It remains zero',
         explanation: 'For a perfectly reversible process, heat transfers and entropy generation balance out, keeping total entropy of the universe constant ($\Delta S_{sys} + \Delta S_{surr} = 0$).'
-      },
-      {
-        id: `q-${Date.now()}-2`,
-        text: `Which statement best describes Clausius Inequality for any real cycle?`,
-        type: 'mcq',
-        options: ['$\oint \frac{dQ}{T} \le 0$', '$\oint \frac{dQ}{T} > 0$', '$\oint dQ = 0$', '$\oint T dS < 0$'],
-        correctAnswer: '$\oint \frac{dQ}{T} \le 0$',
-        explanation: 'Clausius inequality states $\oint dQ/T \le 0$, where equality holds for reversible cycles and inequality (< 0) holds for irreversible real cycles.'
-      },
-      {
-        id: `q-${Date.now()}-3`,
-        text: `True or False: The entropy of a pure crystalline substance at absolute zero temperature (0 K) is exactly zero.`,
-        type: 'mcq',
-        options: ['True (3rd Law of Thermodynamics)', 'False'],
-        correctAnswer: 'True (3rd Law of Thermodynamics)',
-        explanation: 'This is the exact formulation of Nernst Statement / Third Law of Thermodynamics.'
-      },
-      {
-        id: `q-${Date.now()}-4`,
-        text: `A heat engine absorbs 1000 kJ of heat from a reservoir at 500 K and rejects heat to a sink at 300 K. What is the maximum possible efficiency?`,
-        type: 'numerical',
-        options: ['40%', '60%', '50%', '30%'],
-        correctAnswer: '40%',
-        explanation: 'Maximum efficiency = Carnot Efficiency = $1 - T_L/T_H = 1 - 300/500 = 1 - 0.6 = 0.40$ or $40\%$.'
-      },
-      {
-        id: `q-${Date.now()}-5`,
-        text: `When gas expands freely in an isolated container into a vacuum (Free Expansion), how much work is performed?`,
-        type: 'mcq',
-        options: ['Zero ($W = 0$)', 'Positive ($W > 0$)', 'Negative ($W < 0$)', 'Depends on volume'],
-        correctAnswer: 'Zero ($W = 0$)',
-        explanation: 'In free expansion, external resisting pressure $P_{ext} = 0$, so boundary work $W = \int P_{ext} dV = 0$.'
       }
     ];
   }
 
   // 3. Syllabus PDF/Text Extractor
   static async extractSyllabus(rawText: string, apiKey?: string): Promise<SyllabusItem[]> {
+    const serverResult = await this.callServerApi('extractSyllabus', { rawText });
+    if (serverResult?.syllabus && Array.isArray(serverResult.syllabus)) {
+      return serverResult.syllabus;
+    }
+
     const ai = this.getClient(apiKey);
     if (ai) {
       try {
@@ -196,22 +158,15 @@ JSON Schema:
         subject: 'Thermodynamics',
         unit: 'Unit 1: Energy & Laws',
         topics: ['First Law of Thermodynamics', 'Second Law & Carnot Cycle', 'Entropy & Exergy']
-      },
-      {
-        subject: 'Strength of Materials (SOM)',
-        unit: 'Unit 2: Stresses & Strains',
-        topics: ['Bending Stress in Beams', 'Torsion of Circular Shafts', 'Deflection & Columns']
-      },
-      {
-        subject: 'Manufacturing Tech',
-        unit: 'Unit 3: Metal Cutting',
-        topics: ['Orthogonal Machining', 'Welding Processes', 'NC/CNC Machining']
       }
     ];
   }
 
   // 4. Previous Year Question Paper Analyzer
   static async analyzePYQ(paperText: string, apiKey?: string) {
+    const serverResult = await this.callServerApi('analyzePYQ', { paperText });
+    if (serverResult?.analysis) return serverResult.analysis;
+
     const ai = this.getClient(apiKey);
     if (ai) {
       try {
@@ -224,8 +179,7 @@ JSON Schema:
 {
   "subject": "Thermodynamics",
   "highYieldTopics": [
-    { "topic": "Entropy", "frequency": "Very High", "questionCount": 8, "typeRatio": "60% Numerical, 40% Theory" },
-    { "topic": "First Law", "frequency": "High", "questionCount": 5, "typeRatio": "50% Numerical, 50% Theory" }
+    { "topic": "Entropy", "frequency": "Very High", "questionCount": 8, "typeRatio": "60% Numerical, 40% Theory" }
   ],
   "insights": "Key emphasis is placed on entropy calculations and cycle efficiencies."
 }`,
@@ -240,13 +194,9 @@ JSON Schema:
     return {
       subject: 'Thermodynamics & Strength of Materials',
       highYieldTopics: [
-        { topic: 'Entropy & Second Law', frequency: 'Very High', questionCount: 8, typeRatio: '65% Numerical, 35% Theory' },
-        { topic: 'Bending Stress in Beams', frequency: 'High', questionCount: 6, typeRatio: '70% Numerical, 30% Theory' },
-        { topic: 'First Law Closed Systems', frequency: 'High', questionCount: 5, typeRatio: '50% Numerical, 50% Theory' },
-        { topic: 'Torsion of Shafts', frequency: 'Moderate', questionCount: 4, typeRatio: '80% Numerical, 20% Theory' },
-        { topic: 'IC Engine Cycles', frequency: 'Low', questionCount: 2, typeRatio: '40% Numerical, 60% Theory' }
+        { topic: 'Entropy & Second Law', frequency: 'Very High', questionCount: 8, typeRatio: '65% Numerical, 35% Theory' }
       ],
-      insights: 'Analysis of past 5 years shows 62% weightage focused on Entropy and Beam Bending numericals. Prioritize step-by-step problem solving for these high-yield topics.'
+      insights: 'Analysis shows 62% weightage focused on Entropy and Beam Bending numericals.'
     };
   }
 }
