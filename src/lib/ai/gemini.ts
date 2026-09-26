@@ -30,7 +30,52 @@ export class StudyAI {
     return null;
   }
 
-  // 1. Generate Study Copilot Response
+  // 1. Research Full Exam Syllabus for Entered Subjects
+  static async researchExamSyllabus(subjects: string[], examName: string): Promise<{ subject: string; topics: { name: string; importance: number; difficulty: number }[] }[]> {
+    const serverResult = await this.callServerApi('researchSyllabus', { subjects, examName });
+    if (serverResult?.syllabus && Array.isArray(serverResult.syllabus)) {
+      return serverResult.syllabus;
+    }
+
+    const ai = this.getClient();
+    if (ai) {
+      try {
+        const response = await ai.models.generateContent({
+          model: 'gemini-2.5-flash',
+          contents: `You are an expert curriculum researcher for ${examName}. Analyze and break down the complete authoritative syllabus for these subjects: ${subjects.join(', ')}.
+Return a JSON array of objects with schema:
+[
+  {
+    "subject": "Physics",
+    "topics": [
+      { "name": "Kinematics & Motion", "importance": 8, "difficulty": 3 },
+      { "name": "Work, Power & Energy", "importance": 9, "difficulty": 4 },
+      { "name": "Rotational Dynamics", "importance": 9, "difficulty": 5 }
+    ]
+  }
+]`,
+        });
+        const text = response.text || '';
+        const match = text.match(/\[[\s\S]*\]/);
+        if (match) return JSON.parse(match[0]);
+      } catch (err) {
+        console.warn('Syllabus AI research failed, using heuristic breakdown:', err);
+      }
+    }
+
+    // Heuristic breakdown for any user entered subjects
+    return subjects.map(sub => ({
+      subject: sub,
+      topics: [
+        { name: `${sub} — Fundamental Concepts & Definitions`, importance: 9, difficulty: 3 },
+        { name: `${sub} — High-Yield Numerical Problems`, importance: 8, difficulty: 4 },
+        { name: `${sub} — Advanced Applications & Analysis`, importance: 7, difficulty: 4 },
+        { name: `${sub} — Previous Year Questions & Revision`, importance: 9, difficulty: 3 }
+      ]
+    }));
+  }
+
+  // 2. Generate Study Copilot Response
   static async copilotRespond(prompt: string, context?: string, apiKey?: string): Promise<string> {
     const serverResult = await this.callServerApi('copilot', { prompt, context });
     if (serverResult?.reply) return serverResult.reply;
@@ -62,12 +107,10 @@ Here is a clear breakdown for **"${prompt}"**:
    - Write down definitions in your own words.
    - Test yourself using active recall after 10 minutes.
 3. **Common Pitfalls**:
-   - Confusing units or missing boundary conditions during problem solving.
-
-*Tip: You can click "Add to my study plan" below to schedule a 30-minute deep-dive revision session on this topic!*`;
+   - Confusing units or missing boundary conditions during problem solving.`;
   }
 
-  // 2. Generate AI Quiz
+  // 3. Generate AI Quiz
   static async generateQuiz(
     subjectName: string,
     topicName: string,
@@ -112,16 +155,16 @@ Format MUST be a valid JSON array of objects with schema:
     return [
       {
         id: `q-${Date.now()}-1`,
-        text: `In a reversible thermodynamic process, what happens to the total entropy of the universe ($\Delta S_{total}$)?`,
+        text: `In ${subjectName} (${topicName}), what is the primary fundamental principle to evaluate first?`,
         type: 'mcq',
-        options: ['It remains zero', 'It increases continuously', 'It decreases', 'It becomes infinite'],
-        correctAnswer: 'It remains zero',
-        explanation: 'For a perfectly reversible process, heat transfers and entropy generation balance out, keeping total entropy of the universe constant ($\Delta S_{sys} + \Delta S_{surr} = 0$).'
+        options: ['Conservation laws', 'Boundary conditions', 'Initial state parameters', 'Empirical coefficients'],
+        correctAnswer: 'Conservation laws',
+        explanation: 'Conservation principles form the foundation of problem solving across core engineering and scientific domains.'
       }
     ];
   }
 
-  // 3. Syllabus PDF/Text Extractor
+  // 4. Syllabus PDF/Text Extractor
   static async extractSyllabus(rawText: string, apiKey?: string): Promise<SyllabusItem[]> {
     const serverResult = await this.callServerApi('extractSyllabus', { rawText });
     if (serverResult?.syllabus && Array.isArray(serverResult.syllabus)) {
@@ -139,9 +182,9 @@ Text: ${rawText.substring(0, 3000)}
 JSON Schema:
 [
   {
-    "subject": "Thermodynamics",
-    "unit": "Unit 1: Fundamental Concepts",
-    "topics": ["First Law", "Second Law", "Entropy"]
+    "subject": "Physics",
+    "unit": "Unit 1: Mechanics",
+    "topics": ["Kinematics", "Newton Laws", "Energy"]
   }
 ]`,
         });
@@ -155,14 +198,14 @@ JSON Schema:
 
     return [
       {
-        subject: 'Thermodynamics',
-        unit: 'Unit 1: Energy & Laws',
-        topics: ['First Law of Thermodynamics', 'Second Law & Carnot Cycle', 'Entropy & Exergy']
+        subject: 'General Science',
+        unit: 'Unit 1: Fundamentals',
+        topics: ['Core Definitions & Formulas', 'Practice Problems', 'Revision']
       }
     ];
   }
 
-  // 4. Previous Year Question Paper Analyzer
+  // 5. Previous Year Question Paper Analyzer
   static async analyzePYQ(paperText: string, apiKey?: string) {
     const serverResult = await this.callServerApi('analyzePYQ', { paperText });
     if (serverResult?.analysis) return serverResult.analysis;
@@ -177,11 +220,11 @@ Text: ${paperText.substring(0, 3000)}
 
 JSON Schema:
 {
-  "subject": "Thermodynamics",
+  "subject": "General Exam",
   "highYieldTopics": [
-    { "topic": "Entropy", "frequency": "Very High", "questionCount": 8, "typeRatio": "60% Numerical, 40% Theory" }
+    { "topic": "Core Fundamentals", "frequency": "Very High", "questionCount": 8, "typeRatio": "60% Numerical, 40% Theory" }
   ],
-  "insights": "Key emphasis is placed on entropy calculations and cycle efficiencies."
+  "insights": "Key emphasis is placed on fundamental concepts and calculation problems."
 }`,
         });
         const match = response.text?.match(/\{[\s\S]*\}/);
@@ -192,11 +235,11 @@ JSON Schema:
     }
 
     return {
-      subject: 'Thermodynamics & Strength of Materials',
+      subject: 'General Exam',
       highYieldTopics: [
-        { topic: 'Entropy & Second Law', frequency: 'Very High', questionCount: 8, typeRatio: '65% Numerical, 35% Theory' }
+        { topic: 'Core Fundamentals', frequency: 'Very High', questionCount: 8, typeRatio: '65% Numerical, 35% Theory' }
       ],
-      insights: 'Analysis shows 62% weightage focused on Entropy and Beam Bending numericals.'
+      insights: 'Analysis shows 62% weightage focused on core numerical and application problems.'
     };
   }
 }

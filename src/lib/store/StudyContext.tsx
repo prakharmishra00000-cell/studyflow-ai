@@ -7,13 +7,14 @@ import {
 } from '../types';
 import { generateRecommendation } from '../utils/priorityEngine';
 import { redistributeMissedTasks, calculateNextRevisionDate } from '../utils/spacedRepetition';
+import { StudyAI } from '../ai/gemini';
 
 const INITIAL_PROFILE: UserProfile = {
   id: 'user-1',
   name: 'Prakhar',
   exam: 'University Semester Exam',
   examType: 'University Exam',
-  examDate: new Date(Date.now() + 42 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 42 days from now
+  examDate: new Date(Date.now() + 42 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
   dailyStudyHours: 3,
   preparationLevel: 'Intermediate',
   strongSubjects: ['Manufacturing Tech', 'CAD/CAM Systems'],
@@ -23,9 +24,7 @@ const INITIAL_PROFILE: UserProfile = {
   level: 3,
   badges: [
     { id: 'b1', name: '7-Day Streak', description: 'Maintained 7 consecutive study days', icon: '🔥', unlockedAt: '2026-09-20' },
-    { id: 'b2', name: '25 Topics Mastered', description: 'Completed 25 syllabus topics', icon: '📚', unlockedAt: '2026-09-18' },
-    { id: 'b3', name: '500 Questions Solved', description: 'Answered 500 quiz questions', icon: '🧠', unlockedAt: '2026-09-22' },
-    { id: 'b4', name: '10 Revision Sessions', description: 'Completed 10 active recall sessions', icon: '🎯', unlockedAt: '2026-09-24' }
+    { id: 'b2', name: '25 Topics Mastered', description: 'Completed 25 syllabus topics', icon: '📚', unlockedAt: '2026-09-18' }
   ],
   hasCompletedOnboarding: true
 };
@@ -79,48 +78,6 @@ const INITIAL_TOPICS: Topic[] = [
     revisionRisk: 'High Risk',
     mistakeCount: 2,
     totalTimeSpentMinutes: 150
-  },
-  {
-    id: 'top-4',
-    subjectId: 'sub-2',
-    subjectName: 'Strength of Materials (SOM)',
-    name: 'Torsion of Shafts',
-    importance: 7,
-    difficulty: 3,
-    mastery: 72,
-    lastStudied: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-    nextRevision: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString(),
-    revisionRisk: 'Fresh',
-    mistakeCount: 0,
-    totalTimeSpentMinutes: 90
-  },
-  {
-    id: 'top-5',
-    subjectId: 'sub-3',
-    subjectName: 'Manufacturing Tech',
-    name: 'Orthogonal Metal Cutting',
-    importance: 8,
-    difficulty: 3,
-    mastery: 81,
-    lastStudied: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-    nextRevision: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
-    revisionRisk: 'Fresh',
-    mistakeCount: 0,
-    totalTimeSpentMinutes: 210
-  },
-  {
-    id: 'top-6',
-    subjectId: 'sub-4',
-    subjectName: 'CAD/CAM Systems',
-    name: 'CNC Programming & G-Codes',
-    importance: 6,
-    difficulty: 2,
-    mastery: 88,
-    lastStudied: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-    nextRevision: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-    revisionRisk: 'Fresh',
-    mistakeCount: 0,
-    totalTimeSpentMinutes: 140
   }
 ];
 
@@ -152,104 +109,9 @@ const INITIAL_PLANS: DailyPlan[] = [
         activityType: 'Practice',
         status: 'pending',
         scheduledTime: '15:00 - 15:45'
-      },
-      {
-        id: 't-3',
-        subjectId: 'sub-3',
-        subjectName: 'Manufacturing Tech',
-        topicId: 'top-5',
-        topicName: 'Orthogonal Metal Cutting',
-        estimatedMinutes: 30,
-        priority: 'Medium',
-        activityType: 'Revision',
-        status: 'pending',
-        scheduledTime: '18:00 - 18:30'
-      }
-    ]
-  },
-  {
-    date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    label: 'Tomorrow',
-    tasks: [
-      {
-        id: 't-4',
-        subjectId: 'sub-1',
-        subjectName: 'Thermodynamics',
-        topicId: 'top-2',
-        topicName: 'First Law & Open Systems',
-        estimatedMinutes: 45,
-        priority: 'High',
-        activityType: 'Concept',
-        status: 'pending'
-      },
-      {
-        id: 't-5',
-        subjectId: 'sub-2',
-        subjectName: 'Strength of Materials (SOM)',
-        topicId: 'top-4',
-        topicName: 'Torsion of Shafts',
-        estimatedMinutes: 45,
-        priority: 'High',
-        activityType: 'Practice',
-        status: 'pending'
-      }
-    ]
-  },
-  {
-    date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    label: 'This Week',
-    tasks: [
-      {
-        id: 't-6',
-        subjectId: 'sub-4',
-        subjectName: 'CAD/CAM Systems',
-        topicId: 'top-6',
-        topicName: 'CNC Programming & G-Codes',
-        estimatedMinutes: 30,
-        priority: 'Low',
-        activityType: 'Recall',
-        status: 'pending'
       }
     ]
   }
-];
-
-const INITIAL_MISTAKES: Mistake[] = [
-  {
-    id: 'm-1',
-    subjectId: 'sub-1',
-    subjectName: 'Thermodynamics',
-    topicId: 'top-1',
-    topicName: 'Entropy & Second Law',
-    questionText: 'In an irreversible adiabatic expansion process of an ideal gas, what is the net change in entropy of the universe?',
-    userAnswer: 'Zero (ΔS = 0)',
-    correctAnswer: 'Greater than zero (ΔS > 0)',
-    explanation: 'Irreversibility always generates entropy internally (S_gen > 0). Even though Q = 0 (adiabatic), entropy increases.',
-    attemptsCount: 2,
-    dateAdded: '2026-09-18',
-    resolved: false
-  },
-  {
-    id: 'm-2',
-    subjectId: 'sub-2',
-    subjectName: 'Strength of Materials (SOM)',
-    topicId: 'top-3',
-    topicName: 'Bending Stress in Beams',
-    questionText: 'What is the section modulus (Z) for a rectangular beam section of width b and depth d?',
-    userAnswer: 'b * d^2 / 12',
-    correctAnswer: 'b * d^2 / 6',
-    explanation: 'Moment of inertia I = b*d^3/12. Neutral axis distance y_max = d/2. Section modulus Z = I / y_max = (b*d^3/12) / (d/2) = b*d^2/6.',
-    attemptsCount: 1,
-    dateAdded: '2026-09-21',
-    resolved: false
-  }
-];
-
-const INITIAL_COMMITMENTS: Commitment[] = [
-  { id: 'c-1', title: 'College Lectures', category: 'college', startTime: '09:00', endTime: '13:00', durationHours: 4 },
-  { id: 'c-2', title: 'Coaching Institute', category: 'coaching', startTime: '16:00', endTime: '18:00', durationHours: 2 },
-  { id: 'c-3', title: 'Gym & Fitness', category: 'gym', startTime: '18:30', endTime: '19:30', durationHours: 1 },
-  { id: 'c-4', title: 'Sleep & Recovery', category: 'sleep', startTime: '23:00', endTime: '07:00', durationHours: 8 }
 ];
 
 interface StudyContextType {
@@ -260,6 +122,7 @@ interface StudyContextType {
   mistakes: Mistake[];
   commitments: Commitment[];
   updateProfile: (data: Partial<UserProfile>) => void;
+  setupCustomSubjectsAndResearchedSyllabus: (enteredSubjects: string[], examName: string, weakSubs: string[]) => Promise<void>;
   resetToDemo: () => void;
   getRecommendation: (availableMinutes?: number, energy?: EnergyLevel) => Recommendation;
   completeTask: (taskId: string, rating?: UnderstandingRating) => void;
@@ -281,8 +144,8 @@ export const StudyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [subjects, setSubjects] = useState<Subject[]>(INITIAL_SUBJECTS);
   const [topics, setTopics] = useState<Topic[]>(INITIAL_TOPICS);
   const [plans, setPlans] = useState<DailyPlan[]>(INITIAL_PLANS);
-  const [mistakes, setMistakes] = useState<Mistake[]>(INITIAL_MISTAKES);
-  const [commitments, setCommitments] = useState<Commitment[]>(INITIAL_COMMITMENTS);
+  const [mistakes, setMistakes] = useState<Mistake[]>([]);
+  const [commitments, setCommitments] = useState<Commitment[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Load from local storage
@@ -332,13 +195,85 @@ export const StudyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setProfile(prev => ({ ...prev, ...data }));
   };
 
+  const setupCustomSubjectsAndResearchedSyllabus = async (enteredSubjectNames: string[], examName: string, weakSubs: string[]) => {
+    if (!enteredSubjectNames || enteredSubjectNames.length === 0) return;
+
+    // 1. Create Subject objects
+    const colors = ['#ef4444', '#f97316', '#3b82f6', '#10b981', '#8b5cf6', '#ec4899', '#06b6d4'];
+    const newSubjects: Subject[] = enteredSubjectNames.map((name, i) => ({
+      id: `sub-custom-${i + 1}`,
+      name,
+      priority: weakSubs.includes(name) ? 'Critical' : 'High',
+      color: colors[i % colors.length]
+    }));
+    setSubjects(newSubjects);
+
+    // 2. Call AI research to get full authoritative syllabus breakdown
+    const researched = await StudyAI.researchExamSyllabus(enteredSubjectNames, examName);
+
+    // 3. Build Topic objects
+    const newTopics: Topic[] = [];
+    researched.forEach((res, sIdx) => {
+      const parentSub = newSubjects.find(s => s.name.toLowerCase() === res.subject.toLowerCase()) || newSubjects[sIdx] || newSubjects[0];
+      res.topics.forEach((t, tIdx) => {
+        const isWeak = weakSubs.includes(parentSub.name);
+        newTopics.push({
+          id: `top-custom-${sIdx}-${tIdx}`,
+          subjectId: parentSub.id,
+          subjectName: parentSub.name,
+          name: t.name,
+          importance: t.importance || 8,
+          difficulty: t.difficulty || 3,
+          mastery: isWeak ? 35 : 65,
+          revisionRisk: isWeak ? 'High Risk' : 'Due Soon',
+          mistakeCount: 0,
+          totalTimeSpentMinutes: 0,
+          lastStudied: new Date(Date.now() - (sIdx + tIdx + 2) * 24 * 60 * 60 * 1000).toISOString()
+        });
+      });
+    });
+
+    setTopics(newTopics);
+
+    // 4. Generate dynamic Initial Daily Plan
+    const todayTasks: StudyPlanTask[] = newTopics.slice(0, 3).map((t, idx) => ({
+      id: `t-init-${idx}`,
+      subjectId: t.subjectId,
+      subjectName: t.subjectName,
+      topicId: t.id,
+      topicName: t.name,
+      estimatedMinutes: 45,
+      priority: weakSubs.includes(t.subjectName) ? 'Critical' : 'High',
+      activityType: idx === 0 ? 'Concept' : idx === 1 ? 'Practice' : 'Revision',
+      status: 'pending'
+    }));
+
+    const tomorrowTasks: StudyPlanTask[] = newTopics.slice(3, 5).map((t, idx) => ({
+      id: `t-tom-${idx}`,
+      subjectId: t.subjectId,
+      subjectName: t.subjectName,
+      topicId: t.id,
+      topicName: t.name,
+      estimatedMinutes: 45,
+      priority: 'High',
+      activityType: 'Concept',
+      status: 'pending'
+    }));
+
+    setPlans([
+      { date: new Date().toISOString().split('T')[0], label: 'Today', tasks: todayTasks },
+      { date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0], label: 'Tomorrow', tasks: tomorrowTasks },
+      { date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], label: 'This Week', tasks: [] }
+    ]);
+  };
+
   const resetToDemo = () => {
     setProfile(INITIAL_PROFILE);
     setSubjects(INITIAL_SUBJECTS);
     setTopics(INITIAL_TOPICS);
     setPlans(INITIAL_PLANS);
-    setMistakes(INITIAL_MISTAKES);
-    setCommitments(INITIAL_COMMITMENTS);
+    setMistakes([]);
+    setCommitments([]);
     localStorage.clear();
   };
 
@@ -382,7 +317,6 @@ export const StudyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       );
     }
 
-    // Award XP
     setProfile(prev => ({
       ...prev,
       xp: prev.xp + 50,
@@ -420,8 +354,6 @@ export const StudyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       resolved: false
     };
     setMistakes(prev => [newMistake, ...prev]);
-
-    // Also update topic mistake count
     setTopics(prev => prev.map(t => t.id === mistakeData.topicId ? { ...t, mistakeCount: t.mistakeCount + 1 } : t));
   };
 
@@ -441,6 +373,7 @@ export const StudyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const recoveryModeActive = skippedCount >= 2;
 
   const activateRecoveryPlan = () => {
+    if (!topics || topics.length === 0) return;
     setPlans(prev => [
       {
         date: new Date().toISOString().split('T')[0],
@@ -473,6 +406,7 @@ export const StudyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       mistakes,
       commitments,
       updateProfile,
+      setupCustomSubjectsAndResearchedSyllabus,
       resetToDemo,
       getRecommendation,
       completeTask,

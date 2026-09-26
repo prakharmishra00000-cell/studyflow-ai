@@ -1,16 +1,20 @@
 import { NextResponse } from 'next/server';
 import { StudyAI } from '@/lib/ai/gemini';
 
-// Configure Vercel Serverless Function settings for AI responses
-export const maxDuration = 60; // Allows up to 60 seconds for Gemini response generation
+export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { action, prompt, context, subjectName, topicName, questionCount, difficulty, rawText, paperText } = body;
+    const { action, prompt, context, subjectName, topicName, questionCount, difficulty, rawText, paperText, subjects, examName } = body;
 
     const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+
+    if (action === 'researchSyllabus') {
+      const syllabus = await StudyAI.researchExamSyllabus(subjects || [], examName || 'Competitive Exam');
+      return NextResponse.json({ syllabus });
+    }
 
     if (action === 'copilot') {
       const reply = await StudyAI.copilotRespond(prompt, context, apiKey);

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStudyStore } from '@/lib/store/StudyContext';
 import { ExamType, PreparationLevel } from '@/lib/types';
-import { Sparkles, ArrowRight, ArrowLeft, Check, BookOpen, Calendar, Clock, Target, Plus, Trash2 } from 'lucide-react';
+import { Sparkles, ArrowRight, ArrowLeft, Check, BookOpen, Calendar, Clock, Target, Plus, Trash2, Loader2 } from 'lucide-react';
 
 const EXAM_OPTIONS: ExamType[] = [
   'University Exam',
@@ -28,8 +28,9 @@ const PREP_LEVELS: PreparationLevel[] = [
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const { updateProfile } = useStudyStore();
+  const { updateProfile, setupCustomSubjectsAndResearchedSyllabus } = useStudyStore();
   const [step, setStep] = useState(1);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   // Form State
   const [name, setName] = useState('Student');
@@ -39,12 +40,13 @@ export default function OnboardingPage() {
   const [dailyHours, setDailyHours] = useState(3);
   const [prepLevel, setPrepLevel] = useState<PreparationLevel>('Intermediate');
   const [subjectsList, setSubjectsList] = useState<{ name: string; topicsCount: number }[]>([
-    { name: 'Thermodynamics', topicsCount: 5 },
-    { name: 'Strength of Materials', topicsCount: 4 }
+    { name: 'Physics', topicsCount: 5 },
+    { name: 'Chemistry', topicsCount: 4 },
+    { name: 'Mathematics', topicsCount: 5 }
   ]);
   const [newSubName, setNewSubName] = useState('');
-  const [weakSubjects, setWeakSubjects] = useState<string[]>(['Thermodynamics']);
-  const [strongSubjects, setStrongSubjects] = useState<string[]>(['Strength of Materials']);
+  const [weakSubjects, setWeakSubjects] = useState<string[]>(['Physics']);
+  const [strongSubjects, setStrongSubjects] = useState<string[]>(['Mathematics']);
 
   const addSubject = () => {
     if (newSubName.trim()) {
@@ -67,10 +69,14 @@ export default function OnboardingPage() {
     setWeakSubjects(prev => prev.filter(s => s !== sub));
   };
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
+    setIsGenerating(true);
+    const targetExam = examType === 'Other' && customExam ? customExam : examType;
+    const enteredSubNames = subjectsList.map(s => s.name);
+
     updateProfile({
-      name: name.trim() || 'Prakhar',
-      exam: examType === 'Other' && customExam ? customExam : examType,
+      name: name.trim() || 'Student',
+      exam: targetExam,
       examType: examType,
       examDate: examDate,
       dailyStudyHours: dailyHours,
@@ -80,6 +86,10 @@ export default function OnboardingPage() {
       hasCompletedOnboarding: true
     });
 
+    // AI automatically researches syllabus for user-entered subjects & builds plan!
+    await setupCustomSubjectsAndResearchedSyllabus(enteredSubNames, targetExam, weakSubjects);
+
+    setIsGenerating(false);
     router.push('/dashboard');
   };
 
@@ -225,16 +235,17 @@ export default function OnboardingPage() {
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-cyan-400">Step 4 of 6</span>
                 <h2 className="text-2xl font-extrabold text-white mt-1">Add your target subjects</h2>
-                <p className="text-xs text-slate-400 mt-1">List the subjects you need to cover.</p>
+                <p className="text-xs text-slate-400 mt-1">Type all your subjects. AI will automatically research the official syllabus for each.</p>
               </div>
 
               <div className="space-y-3">
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    placeholder="Subject name (e.g. Thermodynamics)"
+                    placeholder="Type subject name (e.g. Organic Chemistry, Physics, Economics)"
                     value={newSubName}
                     onChange={e => setNewSubName(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && addSubject()}
                     className="flex-1 p-3 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-indigo-500"
                   />
                   <button
@@ -336,7 +347,8 @@ export default function OnboardingPage() {
             {step > 1 ? (
               <button
                 onClick={() => setStep(s => s - 1)}
-                className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 font-semibold text-xs flex items-center gap-1.5 hover:bg-slate-700"
+                disabled={isGenerating}
+                className="px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 font-semibold text-xs flex items-center gap-1.5 hover:bg-slate-700 disabled:opacity-50"
               >
                 <ArrowLeft className="w-4 h-4" /> Back
               </button>
@@ -352,9 +364,20 @@ export default function OnboardingPage() {
             ) : (
               <button
                 onClick={handleFinish}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-600 to-cyan-500 text-white font-extrabold text-xs flex items-center gap-1.5 shadow-lg shadow-indigo-500/30 hover:brightness-110"
+                disabled={isGenerating}
+                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-600 to-cyan-500 text-white font-extrabold text-xs flex items-center gap-1.5 shadow-lg shadow-indigo-500/30 hover:brightness-110 disabled:opacity-50"
               >
-                Generate My AI Plan <Sparkles className="w-4 h-4" />
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin text-cyan-300" />
+                    <span>AI Researching Syllabus & Generating Plan...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Generate My AI Plan</span>
+                    <Sparkles className="w-4 h-4" />
+                  </>
+                )}
               </button>
             )}
           </div>
@@ -362,7 +385,7 @@ export default function OnboardingPage() {
       </main>
 
       <footer className="text-center text-[11px] text-slate-500">
-        STUDYFLOW AI — Onboarding Setup
+        STUDYFLOW AI — Automatic Syllabus Research & Onboarding Setup
       </footer>
     </div>
   );
