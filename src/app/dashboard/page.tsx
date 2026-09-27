@@ -208,7 +208,7 @@ export default function HomeDashboardPage() {
                 </div>
 
                 <div className="space-y-3 pt-2">
-                  {months.slice(0, 3).map((m) => (
+                  {months.map((m) => (
                     <div key={m.monthNumber} className="p-4 rounded-2xl bg-[#060811] border border-slate-800 flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <span className="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center font-bold text-xs text-purple-300">

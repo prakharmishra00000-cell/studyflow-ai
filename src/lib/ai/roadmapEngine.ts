@@ -166,7 +166,9 @@ export class RoadmapEngine {
           { id: 'w1', monthNumber: 1, weekNumber: 1, title: 'Week 1 — Python Fundamentals', status: 'completed', topics: [m1Topics[0], m1Topics[1]] },
           { id: 'w2', monthNumber: 1, weekNumber: 2, title: 'Week 2 — Data Structures', status: 'active', topics: [m1Topics[2]] },
           { id: 'w3', monthNumber: 1, weekNumber: 3, title: 'Week 3 — Modules & File Handling', status: 'upcoming', topics: [m1Topics[3]] },
-          { id: 'w4', monthNumber: 1, weekNumber: 4, title: 'Week 4 — Foundations Milestone Project', status: 'upcoming', topics: [] }
+          { id: 'w4', monthNumber: 1, weekNumber: 4, title: 'Week 4 — Foundations Milestone Project', status: 'upcoming', topics: [
+            { id: 'pda-4b', name: 'Python Foundations Portfolio Project', priority: '🔴 Essential', estimatedMinutes: 90, category: 'Portfolio', status: 'pending', mastery: 0, masteryLevel: 'Awareness', description: 'Build an end-to-end CLI tool applying lists, dicts, and functions.', resources: this.createResources('Python Portfolio Project', 'https://github.com', 'CLI project tutorial') }
+          ] }
         ]
       },
       {
@@ -198,7 +200,7 @@ export class RoadmapEngine {
       });
     }
 
-    if (months >= 6) {
+    if (months >= 4) {
       result.push({
         monthNumber: 4,
         title: 'Month 4 — Advanced Analytics & ETL Automation',
@@ -209,6 +211,9 @@ export class RoadmapEngine {
           { id: 'w14', monthNumber: 4, weekNumber: 14, title: 'Week 14 — Automated Excel & PDF Reporting', status: 'upcoming', topics: [m4_6Topics[1]] }
         ]
       });
+    }
+
+    if (months >= 5) {
       result.push({
         monthNumber: 5,
         title: 'Month 5 — Advanced Dashboarding & Cloud SQL',
@@ -218,18 +223,23 @@ export class RoadmapEngine {
           { id: 'w15', monthNumber: 5, weekNumber: 15, title: 'Week 15 — BigQuery & Cloud Databases', status: 'upcoming', topics: [m4_6Topics[2]] }
         ]
       });
+    }
+
+    if (months >= 6) {
       result.push({
         monthNumber: 6,
         title: 'Month 6 — Job Placement, Portfolio & Mock Interviews',
         badgeColor: 'emerald',
         status: 'upcoming',
         weeks: [
-          { id: 'w16', monthNumber: 6, weekNumber: 16, title: 'Week 16 — Live Portfolio & Technical Interview Clearance', status: 'upcoming', topics: [] }
+          { id: 'w16', monthNumber: 6, weekNumber: 16, title: 'Week 16 — Live Portfolio & Technical Interview Clearance', status: 'upcoming', topics: [
+            { id: 'pda-16b', name: 'Technical Resume & Live Interview Clearance', priority: '🔴 Essential', estimatedMinutes: 90, category: 'Career', status: 'pending', mastery: 0, masteryLevel: 'Awareness', description: 'GitHub portfolio review, SQL live coding practice, resume ATS clearance.', resources: this.createResources('Data Analyst Interview Guide', 'https://interviewbit.com', 'Technical interview clearance') }
+          ] }
         ]
       });
     }
 
-    return result;
+    return result.slice(0, months);
   }
 
   // PYTHON FOR BACKEND DEVELOPER
