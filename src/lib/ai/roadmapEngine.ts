@@ -84,11 +84,13 @@ export class RoadmapEngine {
   static parseDurationMonths(durationStr: string): number {
     if (!durationStr) return 3;
     if (durationStr.includes('30 Days') || durationStr.includes('1 Month')) return 1;
-    if (durationStr.includes('2 Months')) return 2;
-    if (durationStr.includes('3 Months')) return 3;
-    if (durationStr.includes('6 Months')) return 6;
-    if (durationStr.includes('9 Months')) return 9;
-    if (durationStr.includes('1 Year')) return 12;
+    if (durationStr.includes('2 Month')) return 2;
+    if (durationStr.includes('3 Month')) return 3;
+    if (durationStr.includes('6 Month')) return 6;
+    if (durationStr.includes('9 Month')) return 9;
+    if (durationStr.includes('1 Year') || durationStr.includes('12 Month')) return 12;
+    const match = durationStr.match(/(\d+)/);
+    if (match) return parseInt(match[1], 10);
     return 3;
   }
 
@@ -127,234 +129,367 @@ export class RoadmapEngine {
     return this.buildGenericCurriculum(skill, goal, monthsCount, level);
   }
 
-  // PYTHON FOR DATA ANALYST
+  // PYTHON FOR DATA ANALYST (Full 1 to 12 months, 4 weeks per month)
   private static buildPythonDataAnalystCurriculum(months: number, level: string): RoadmapMonth[] {
-    const m1Topics: RoadmapTopic[] = [
-      { id: 'pda-1', name: 'Python Fundamentals & Syntax', priority: '🔴 Essential', estimatedMinutes: 60, category: 'Core', status: 'completed', mastery: 85, masteryLevel: 'Strong', description: 'Variables, primitive types, string formatting, arithmetic operators.', resources: this.createResources('Python Docs', 'https://docs.python.org/3/', 'Python syntax basics') },
-      { id: 'pda-2', name: 'Control Flow & Functions', priority: '🔴 Essential', estimatedMinutes: 60, category: 'Core', status: 'completed', mastery: 75, masteryLevel: 'Proficient', description: 'If-else branching, loops, functions, args and return values.', resources: this.createResources('RealPython Functions', 'https://realpython.com', 'Guide to clean Python functions') },
-      { id: 'pda-3', name: 'Python Data Structures (Lists, Dicts, Sets)', priority: '🔴 Essential', estimatedMinutes: 60, category: 'Core', status: 'in_progress', mastery: 55, masteryLevel: 'Developing', description: 'List indexing/slicing, dictionaries key-values, tuples, set operations.', resources: this.createResources('W3Schools Python Lists', 'https://w3schools.com', 'Interactive list operations') },
-      { id: 'pda-4', name: 'Modules & Error Handling', priority: '🟡 Important', estimatedMinutes: 45, category: 'Core', status: 'pending', mastery: 30, masteryLevel: 'Beginner', description: 'Importing modules, try-except blocks, raising custom exceptions.', resources: this.createResources('Python Exception Guide', 'https://docs.python.org', 'Robust error handling') }
-    ];
-
-    const m2Topics: RoadmapTopic[] = [
-      { id: 'pda-5', name: 'NumPy Vectorized Computing', priority: '🔴 Essential', estimatedMinutes: 60, category: 'Data Analysis', status: 'pending', mastery: 20, masteryLevel: 'Awareness', description: 'ND-arrays, linear algebra broadcasting, element-wise math.', resources: this.createResources('NumPy Official Quickstart', 'https://numpy.org', 'Fast array computations') },
-      { id: 'pda-6', name: 'Pandas DataFrames & Series', priority: '🔴 Essential', estimatedMinutes: 90, category: 'Data Analysis', status: 'pending', mastery: 15, masteryLevel: 'Awareness', description: 'Reading CSVs/JSONs, loc/iloc indexing, DataFrame manipulation.', resources: this.createResources('Pandas 10-Min Guide', 'https://pandas.pydata.org', 'Core data manipulation') },
-      { id: 'pda-7', name: 'SQL Querying (SELECT, JOINs, Group By)', priority: '🔴 Essential', estimatedMinutes: 90, category: 'Database', status: 'pending', mastery: 10, masteryLevel: 'Awareness', description: 'Relational data query fundamentals, inner/left joins, aggregations.', resources: this.createResources('SQLZoo Practice', 'https://sqlzoo.net', 'Interactive SQL query exercises') },
-      { id: 'pda-8', name: 'Statistics for Data Analysis', priority: '🟡 Important', estimatedMinutes: 60, category: 'Math', status: 'pending', mastery: 0, masteryLevel: 'Awareness', description: 'Mean, median, variance, standard deviation, correlation, hypothesis testing.', resources: this.createResources('Khan Academy Statistics', 'https://khanacademy.org', 'Intuitive statistical reasoning') }
-    ];
-
-    const m3Topics: RoadmapTopic[] = [
-      { id: 'pda-9', name: 'Data Cleaning & Wrangling', priority: '🔴 Essential', estimatedMinutes: 60, category: 'Data Analysis', status: 'pending', mastery: 0, masteryLevel: 'Awareness', description: 'Handling missing values, deduplication, type casting, regex extraction.', resources: this.createResources('Kaggle Data Cleaning', 'https://kaggle.com', 'Real-world noisy dataset cleaning') },
-      { id: 'pda-10', name: 'Matplotlib & Seaborn Visualization', priority: '🟡 Important', estimatedMinutes: 60, category: 'Visualization', status: 'pending', mastery: 0, masteryLevel: 'Awareness', description: 'Line graphs, bar charts, heatmaps, scatter plots, distributions.', resources: this.createResources('Seaborn Gallery', 'https://seaborn.pydata.org', 'Beautiful statistical plots') },
-      { id: 'pda-11', name: 'Power BI / Tableau Dashboards', priority: '🟡 Important', estimatedMinutes: 90, category: 'BI Tools', status: 'pending', mastery: 0, masteryLevel: 'Awareness', description: 'Building interactive visual dashboards, DAX metrics, publishing reports.', resources: this.createResources('Microsoft Power BI Learn', 'https://learn.microsoft.com', 'Enterprise BI dashboard creation') },
-      { id: 'pda-12', name: 'Real-world Data Projects & Portfolio', priority: '🔴 Essential', estimatedMinutes: 120, category: 'Portfolio', status: 'pending', mastery: 0, masteryLevel: 'Awareness', description: 'End-to-end sales analytics dashboard, GitHub repo, portfolio case study.', resources: this.createResources('GitHub Portfolio Guide', 'https://github.com', 'Showcasing data projects effectively') }
-    ];
-
-    const m4_6Topics: RoadmapTopic[] = [
-      { id: 'pda-13', name: 'Advanced SQL Window Functions', priority: '🔵 Optional', estimatedMinutes: 60, category: 'Database', status: 'pending', mastery: 0, masteryLevel: 'Awareness', description: 'RANK(), DENSE_RANK(), LAG(), LEAD(), partition by analytics.', resources: this.createResources('Mode SQL Tutorial', 'https://mode.com', 'Advanced analytical SQL') },
-      { id: 'pda-14', name: 'Automated Excel & Report Generation', priority: '🔵 Optional', estimatedMinutes: 45, category: 'Automation', status: 'pending', mastery: 0, masteryLevel: 'Awareness', description: 'OpenPyXL, automated PDF report generation, email alerts.', resources: this.createResources('Automate the Boring Stuff', 'https://automatetheboringstuff.com', 'Excel automation with Python') },
-      { id: 'pda-15', name: 'Resume Optimization & Mock Interviews', priority: '🟣 Advanced', estimatedMinutes: 60, category: 'Career', status: 'pending', mastery: 0, masteryLevel: 'Awareness', description: 'ATS-optimized Data Analyst resume, behavioral & technical SQL/Pandas interviews.', resources: this.createResources('InterviewBit SQL', 'https://interviewbit.com', 'Top Data Analyst interview questions') }
-    ];
-
-    const result: RoadmapMonth[] = [
+    const monthDefinitions = [
       {
         monthNumber: 1,
-        title: 'Month 1 — Foundations & Core Python',
-        badgeColor: 'emerald',
-        status: 'active',
+        title: 'Month 1 — Foundations & Core Python Syntax',
+        badgeColor: 'emerald' as const,
         weeks: [
-          { id: 'w1', monthNumber: 1, weekNumber: 1, title: 'Week 1 — Python Fundamentals', status: 'completed', topics: [m1Topics[0], m1Topics[1]] },
-          { id: 'w2', monthNumber: 1, weekNumber: 2, title: 'Week 2 — Data Structures', status: 'active', topics: [m1Topics[2]] },
-          { id: 'w3', monthNumber: 1, weekNumber: 3, title: 'Week 3 — Modules & File Handling', status: 'upcoming', topics: [m1Topics[3]] },
-          { id: 'w4', monthNumber: 1, weekNumber: 4, title: 'Week 4 — Foundations Milestone Project', status: 'upcoming', topics: [
-            { id: 'pda-4b', name: 'Python Foundations Portfolio Project', priority: '🔴 Essential', estimatedMinutes: 90, category: 'Portfolio', status: 'pending', mastery: 0, masteryLevel: 'Awareness', description: 'Build an end-to-end CLI tool applying lists, dicts, and functions.', resources: this.createResources('Python Portfolio Project', 'https://github.com', 'CLI project tutorial') }
-          ] }
+          { title: 'Week 1 — Python Fundamentals & Syntax', topicName: 'Variables, Data Types & Operators', desc: 'Variables, primitive types, string formatting, arithmetic operators.', priority: '🔴 Essential' as TopicPriority, cat: 'Core' },
+          { title: 'Week 2 — Control Flow & Functions', topicName: 'Branching, Loops & Modular Functions', desc: 'If-else branching, for/while loops, function definitions & return values.', priority: '🔴 Essential' as TopicPriority, cat: 'Core' },
+          { title: 'Week 3 — Data Structures (Lists, Dicts, Sets)', topicName: 'List Slicing, Dictionaries & Tuples', desc: 'List indexing, dictionary key-values, tuple immutability, set operations.', priority: '🔴 Essential' as TopicPriority, cat: 'Core' },
+          { title: 'Week 4 — Modules & Python CLI Capstone', topicName: 'Modules, File I/O & CLI Project', desc: 'Importing packages, try-except error handling, building persistent CLI tool.', priority: '🔴 Essential' as TopicPriority, cat: 'Portfolio' }
         ]
       },
       {
         monthNumber: 2,
-        title: 'Month 2 — Data Processing & SQL',
-        badgeColor: 'amber',
-        status: 'upcoming',
+        title: 'Month 2 — Data Processing & Relational SQL',
+        badgeColor: 'amber' as const,
         weeks: [
-          { id: 'w5', monthNumber: 2, weekNumber: 5, title: 'Week 5 — NumPy & Vectorized Computing', status: 'upcoming', topics: [m2Topics[0]] },
-          { id: 'w6', monthNumber: 2, weekNumber: 6, title: 'Week 6 — Pandas Core DataFrames', status: 'upcoming', topics: [m2Topics[1]] },
-          { id: 'w7', monthNumber: 2, weekNumber: 7, title: 'Week 7 — SQL Relational Databases', status: 'upcoming', topics: [m2Topics[2]] },
-          { id: 'w8', monthNumber: 2, weekNumber: 8, title: 'Week 8 — Applied Business Statistics', status: 'upcoming', topics: [m2Topics[3]] }
+          { title: 'Week 5 — NumPy & Vectorized Computation', topicName: 'NumPy Arrays & Linear Algebra', desc: 'ND-arrays, vectorized math operations, broadcasting, masking.', priority: '🔴 Essential' as TopicPriority, cat: 'Data Analysis' },
+          { title: 'Week 6 — Pandas Core DataFrames', topicName: 'Pandas DataFrames, loc/iloc & Merging', desc: 'Reading CSV/JSON files, loc/iloc indexing, merging & concatenating DataFrames.', priority: '🔴 Essential' as TopicPriority, cat: 'Data Analysis' },
+          { title: 'Week 7 — SQL Relational Databases', topicName: 'SQL SELECT, JOINs & Group By', desc: 'Relational data query fundamentals, inner/left joins, aggregations & GROUP BY.', priority: '🔴 Essential' as TopicPriority, cat: 'Database' },
+          { title: 'Week 8 — Applied Business Statistics', topicName: 'Descriptive & Inferential Statistics', desc: 'Mean, median, variance, standard deviation, correlation matrices, hypothesis testing.', priority: '🟡 Important' as TopicPriority, cat: 'Math' }
+        ]
+      },
+      {
+        monthNumber: 3,
+        title: 'Month 3 — Data Visualization, BI & Portfolio Capstone',
+        badgeColor: 'cyan' as const,
+        weeks: [
+          { title: 'Week 9 — Data Cleaning & Wrangling', topicName: 'Missing Data Imputation & Outlier Removal', desc: 'Handling missing values, deduplication, regex extraction, data type casting.', priority: '🔴 Essential' as TopicPriority, cat: 'Data Analysis' },
+          { title: 'Week 10 — Seaborn & Matplotlib Visualization', topicName: 'Statistical Plots & Visual Storytelling', desc: 'Line graphs, bar charts, heatmaps, distribution plots, customized themes.', priority: '🟡 Important' as TopicPriority, cat: 'Visualization' },
+          { title: 'Week 11 — Power BI / Tableau Dashboards', topicName: 'Interactive Dashboards & DAX Metrics', desc: 'Building interactive visual dashboards, calculated columns, publishing reports.', priority: '🟡 Important' as TopicPriority, cat: 'BI Tools' },
+          { title: 'Week 12 — End-to-End Sales Analytics Capstone', topicName: 'Live Portfolio Capstone & Case Study', desc: 'End-to-end e-commerce analytics dashboard, GitHub repo, executive report.', priority: '🔴 Essential' as TopicPriority, cat: 'Portfolio' }
+        ]
+      },
+      {
+        monthNumber: 4,
+        title: 'Month 4 — Advanced SQL, Window Functions & Automation',
+        badgeColor: 'purple' as const,
+        weeks: [
+          { title: 'Week 13 — SQL Window Functions', topicName: 'RANK(), DENSE_RANK() & LAG/LEAD', desc: 'Analytical SQL queries, partition by clause, running totals, cohort analytics.', priority: '🔴 Essential' as TopicPriority, cat: 'Database' },
+          { title: 'Week 14 — Automated Excel & PDF Reporting', topicName: 'OpenPyXL & Automated Report Generation', desc: 'Python scripts for automated Excel formatting, PDF report generation, email alerts.', priority: '🟡 Important' as TopicPriority, cat: 'Automation' },
+          { title: 'Week 15 — Web Scraping for Data Extraction', topicName: 'BeautifulSoup & Requests Pipeline', desc: 'Extracting data from web pages, parsing DOM structures, automated scheduling.', priority: '🔵 Optional' as TopicPriority, cat: 'Automation' },
+          { title: 'Week 16 — Advanced ETL Pipeline Design', topicName: 'Data Ingestion & Cleaning Workflows', desc: 'Designing modular data processing pipelines from raw logs to clean warehouse tables.', priority: '🔴 Essential' as TopicPriority, cat: 'Data Engineering' }
+        ]
+      },
+      {
+        monthNumber: 5,
+        title: 'Month 5 — Cloud Data Warehousing & Big Data Tools',
+        badgeColor: 'indigo' as const,
+        weeks: [
+          { title: 'Week 17 — Google BigQuery & Cloud Databases', topicName: 'BigQuery SQL & Cloud Warehousing', desc: 'Querying massive datasets in BigQuery, partitioning, clustering tables.', priority: '🔴 Essential' as TopicPriority, cat: 'Cloud SQL' },
+          { title: 'Week 18 — Snowflake Warehousing Architecture', topicName: 'Snowflake Virtual Warehouses & Staging', desc: 'Snowflake staging, COPY INTO operations, zero-copy cloning, RBAC security.', priority: '🟡 Important' as TopicPriority, cat: 'Cloud SQL' },
+          { title: 'Week 19 — PySpark Large Dataset Processing', topicName: 'PySpark RDDs & DataFrames', desc: 'Distributed computing fundamentals, Spark DataFrames, processing gigabyte datasets.', priority: '🟣 Advanced' as TopicPriority, cat: 'Big Data' },
+          { title: 'Week 20 — Automated Workflow Orchestration', topicName: 'Airflow DAG Scheduling Basics', desc: 'Building automated data pipeline DAGs, task dependencies, failure alerts.', priority: '🟡 Important' as TopicPriority, cat: 'Data Engineering' }
+        ]
+      },
+      {
+        monthNumber: 6,
+        title: 'Month 6 — Predictive Analytics, Machine Learning & Career Clearance',
+        badgeColor: 'emerald' as const,
+        weeks: [
+          { title: 'Week 21 — Exploratory Data Analysis (EDA)', topicName: 'Advanced Feature Analysis & Insights', desc: 'Multivariate EDA, correlation analysis, anomaly detection, business insights.', priority: '🔴 Essential' as TopicPriority, cat: 'Data Analysis' },
+          { title: 'Week 22 — Predictive Modeling with Scikit-Learn', topicName: 'Linear & Logistic Regression Models', desc: 'Scikit-Learn model training, train/test splitting, confusion matrix, ROC-AUC.', priority: '🔴 Essential' as TopicPriority, cat: 'Machine Learning' },
+          { title: 'Week 23 — Live Portfolio Web Platform', topicName: 'GitHub Portfolio & Case Study Publication', desc: 'Deploying interactive portfolio web dashboard using Streamlit/GitHub Pages.', priority: '🔴 Essential' as TopicPriority, cat: 'Portfolio' },
+          { title: 'Week 24 — Technical Resume & Mock Interview Clearance', topicName: 'ATS Resume Clearance & Live Coding Practice', desc: 'Behavioral & technical SQL/Pandas live coding interviews, resume optimization.', priority: '🔴 Essential' as TopicPriority, cat: 'Career' }
+        ]
+      },
+      {
+        monthNumber: 7,
+        title: 'Month 7 — Statistical Inference & A/B Experimentation',
+        badgeColor: 'amber' as const,
+        weeks: [
+          { title: 'Week 25 — Hypothesis Testing & Confidence Intervals', topicName: 'Z-test, T-test & Chi-Square Analysis', desc: 'P-values, null hypothesis testing, statistical significance, sample sizes.', priority: '🔴 Essential' as TopicPriority, cat: 'Statistics' },
+          { title: 'Week 26 — A/B Testing Experiment Design', topicName: 'A/B Test Design & Conversion Analysis', desc: 'Randomization, minimum detectable effect, tracking conversion metrics.', priority: '🔴 Essential' as TopicPriority, cat: 'Experimentation' },
+          { title: 'Week 27 — Time Series Analysis & Forecasting', topicName: 'ARIMA, Prophet & Moving Averages', desc: 'Stationarity, seasonality decomposition, predicting future sales trends.', priority: '🟡 Important' as TopicPriority, cat: 'Analytics' },
+          { title: 'Week 28 — Product Analytics & Funnel Analysis', topicName: 'Cohort Analysis & Retention Rates', desc: 'User retention curves, churn rate calculation, conversion funnels.', priority: '🟡 Important' as TopicPriority, cat: 'Product Analytics' }
+        ]
+      },
+      {
+        monthNumber: 8,
+        title: 'Month 8 — Advanced Enterprise Dashboards & Governance',
+        badgeColor: 'cyan' as const,
+        weeks: [
+          { title: 'Week 29 — Advanced DAX & Power BI Modeling', topicName: 'Complex DAX Calculations & Star Schema', desc: 'CALCULATE(), SUMX(), time intelligence functions, star-schema data modeling.', priority: '🔴 Essential' as TopicPriority, cat: 'BI Tools' },
+          { title: 'Week 30 — Tableau Calculations & LOD Expressions', topicName: 'Tableau Level of Detail (LOD) Expressions', desc: 'FIXED, INCLUDE, EXCLUDE calculations, parameter actions, executive design.', priority: '🟡 Important' as TopicPriority, cat: 'BI Tools' },
+          { title: 'Week 31 — Data Quality Auditing & Governance', topicName: 'Data Validation Rules & Integrity Checks', desc: 'Automated data quality checks, schema drift validation, documentation standards.', priority: '🟡 Important' as TopicPriority, cat: 'Governance' },
+          { title: 'Week 32 — Enterprise Executive Dashboard Capstone', topicName: 'C-Suite Executive KPI Dashboard', desc: 'Designing multi-tab enterprise dashboard with dynamic filtering and security.', priority: '🔴 Essential' as TopicPriority, cat: 'Portfolio' }
+        ]
+      },
+      {
+        monthNumber: 9,
+        title: 'Month 9 — Machine Learning for BI & Customer Analytics',
+        badgeColor: 'purple' as const,
+        weeks: [
+          { title: 'Week 33 — Customer Segmentation & K-Means Clustering', topicName: 'RFM Modeling & K-Means Clustering', desc: 'Recency, Frequency, Monetary value scoring, unsupervised clustering.', priority: '🔴 Essential' as TopicPriority, cat: 'Machine Learning' },
+          { title: 'Week 34 — Customer Churn Prediction Models', topicName: 'Decision Trees & Random Forests', desc: 'Predicting user churn probability, feature importance evaluation.', priority: '🔴 Essential' as TopicPriority, cat: 'Machine Learning' },
+          { title: 'Week 35 — Market Basket Analysis & Association Rules', topicName: 'Apriori Algorithm & Cross-sell Insights', desc: 'Association rules, support, confidence, lift metrics for e-commerce.', priority: '🔵 Optional' as TopicPriority, cat: 'Analytics' },
+          { title: 'Week 36 — Model Diagnostics & Business Valuation', topicName: 'Evaluating ML ROI & Model Deployment', desc: 'Translating model accuracy into financial revenue impact for leadership.', priority: '🟣 Advanced' as TopicPriority, cat: 'Strategy' }
+        ]
+      },
+      {
+        monthNumber: 10,
+        title: 'Month 10 — Real-Time Streaming Analytics & Web Apps',
+        badgeColor: 'indigo' as const,
+        weeks: [
+          { title: 'Week 37 — Real-Time Data Streaming Concepts', topicName: 'API Polling & Webhook Integration', desc: 'Consuming real-time stock/crypto or web event streams into DataFrames.', priority: '🟡 Important' as TopicPriority, cat: 'Streaming' },
+          { title: 'Week 38 — REST API Integration & Microservices', topicName: 'Building Fast Data Extraction APIs', desc: 'Exposing query endpoints using FastAPI for real-time analytics consuming.', priority: '🟡 Important' as TopicPriority, cat: 'API Development' },
+          { title: 'Week 39 — Streamlit Web Dashboard Development', topicName: 'Interactive Web Apps with Streamlit', desc: 'Building custom Python web applications with widgets, plots, and real-time refresh.', priority: '🔴 Essential' as TopicPriority, cat: 'Web Apps' },
+          { title: 'Week 40 — Live Analytics Platform Capstone', topicName: 'Real-time Analytics Web Platform', desc: 'Building full-stack interactive analytics application deployed to cloud.', priority: '🔴 Essential' as TopicPriority, cat: 'Portfolio' }
+        ]
+      },
+      {
+        monthNumber: 11,
+        title: 'Month 11 — Production Data Engineering & Infrastructure',
+        badgeColor: 'emerald' as const,
+        weeks: [
+          { title: 'Week 41 — Docker Containers for Data Applications', topicName: 'Dockerization of Analytics Pipelines', desc: 'Containerizing Python data scripts, writing Dockerfiles and compose setups.', priority: '🟡 Important' as TopicPriority, cat: 'DevOps' },
+          { title: 'Week 42 — CI/CD for Data Pipelines', topicName: 'GitHub Actions for Automated Testing', desc: 'Automating pipeline execution and unit testing on code commits.', priority: '🟡 Important' as TopicPriority, cat: 'DevOps' },
+          { title: 'Week 43 — Cloud Infrastructure (AWS S3 / GCP Cloud Storage)', topicName: 'Cloud Data Lakes & Blob Storage', desc: 'Storing unstructured data in cloud buckets, querying S3 via PySpark/DuckDB.', priority: '🔴 Essential' as TopicPriority, cat: 'Cloud' },
+          { title: 'Week 44 — Production Pipeline Load & Stress Testing', topicName: 'Benchmark Testing & Performance Tuning', desc: 'Optimizing SQL query execution plans, memory profiling Pandas operations.', priority: '🟣 Advanced' as TopicPriority, cat: 'Engineering' }
+        ]
+      },
+      {
+        monthNumber: 12,
+        title: 'Month 12 — Principal Analyst Mastery & Career Placement',
+        badgeColor: 'cyan' as const,
+        weeks: [
+          { title: 'Week 45 — Executive KPI Strategy & Storytelling', topicName: 'Executive Communication & Presentation', desc: 'Structuring executive slide decks, presenting data insights to non-technical stakeholders.', priority: '🔴 Essential' as TopicPriority, cat: 'Leadership' },
+          { title: 'Week 46 — Data Team Governance & Ethics', topicName: 'Data Privacy, GDPR & Compliance', desc: 'Handling PII data securely, compliance regulations, ethical AI considerations.', priority: '🟡 Important' as TopicPriority, cat: 'Governance' },
+          { title: 'Week 47 — Master Technical Portfolio Review', topicName: 'Complete Portfolio Audit & Polish', desc: 'Finalizing 3 major capstone projects, open-source contribution reviews.', priority: '🔴 Essential' as TopicPriority, cat: 'Portfolio' },
+          { title: 'Week 48 — Final Career Placement & Salary Negotiation', topicName: 'Job Search Strategy & Offer Clearance', desc: 'Targeted company outreach, salary negotiation tactics, final interview clearance.', priority: '🔴 Essential' as TopicPriority, cat: 'Career Placement' }
         ]
       }
     ];
 
-    if (months >= 3) {
-      result.push({
-        monthNumber: 3,
-        title: 'Month 3 — Visualization, BI & Job Ready Portfolio',
-        badgeColor: 'cyan',
-        status: 'upcoming',
-        weeks: [
-          { id: 'w9', monthNumber: 3, weekNumber: 9, title: 'Week 9 — Data Wrangling & Cleaning', status: 'upcoming', topics: [m3Topics[0]] },
-          { id: 'w10', monthNumber: 3, weekNumber: 10, title: 'Week 10 — Seaborn & Matplotlib Visualization', status: 'upcoming', topics: [m3Topics[1]] },
-          { id: 'w11', monthNumber: 3, weekNumber: 11, title: 'Week 11 — Power BI Interactive Dashboards', status: 'upcoming', topics: [m3Topics[2]] },
-          { id: 'w12', monthNumber: 3, weekNumber: 12, title: 'Week 12 — End-to-End Capstone & Interview Prep', status: 'upcoming', topics: [m3Topics[3]] }
-        ]
-      });
-    }
-
-    if (months >= 4) {
-      result.push({
-        monthNumber: 4,
-        title: 'Month 4 — Advanced Analytics & ETL Automation',
-        badgeColor: 'purple',
-        status: 'upcoming',
-        weeks: [
-          { id: 'w13', monthNumber: 4, weekNumber: 13, title: 'Week 13 — SQL Window Functions & Aggregations', status: 'upcoming', topics: [m4_6Topics[0]] },
-          { id: 'w14', monthNumber: 4, weekNumber: 14, title: 'Week 14 — Automated Excel & PDF Reporting', status: 'upcoming', topics: [m4_6Topics[1]] }
-        ]
-      });
-    }
-
-    if (months >= 5) {
-      result.push({
-        monthNumber: 5,
-        title: 'Month 5 — Advanced Dashboarding & Cloud SQL',
-        badgeColor: 'indigo',
-        status: 'upcoming',
-        weeks: [
-          { id: 'w15', monthNumber: 5, weekNumber: 15, title: 'Week 15 — BigQuery & Cloud Databases', status: 'upcoming', topics: [m4_6Topics[2]] }
-        ]
-      });
-    }
-
-    if (months >= 6) {
-      result.push({
-        monthNumber: 6,
-        title: 'Month 6 — Job Placement, Portfolio & Mock Interviews',
-        badgeColor: 'emerald',
-        status: 'upcoming',
-        weeks: [
-          { id: 'w16', monthNumber: 6, weekNumber: 16, title: 'Week 16 — Live Portfolio & Technical Interview Clearance', status: 'upcoming', topics: [
-            { id: 'pda-16b', name: 'Technical Resume & Live Interview Clearance', priority: '🔴 Essential', estimatedMinutes: 90, category: 'Career', status: 'pending', mastery: 0, masteryLevel: 'Awareness', description: 'GitHub portfolio review, SQL live coding practice, resume ATS clearance.', resources: this.createResources('Data Analyst Interview Guide', 'https://interviewbit.com', 'Technical interview clearance') }
-          ] }
-        ]
-      });
-    }
-
-    return result.slice(0, months);
+    return this.buildMonthsFromDefinitions(monthDefinitions, months);
   }
 
-  // PYTHON FOR BACKEND DEVELOPER
+  // PYTHON FOR BACKEND DEVELOPER (Full 1 to 12 months, 4 weeks per month)
   private static buildPythonBackendCurriculum(months: number, level: string): RoadmapMonth[] {
-    const result: RoadmapMonth[] = [
+    const monthDefinitions = [
       {
         monthNumber: 1,
         title: 'Month 1 — Python Core, OOP & Version Control',
-        badgeColor: 'emerald',
-        status: 'active',
+        badgeColor: 'emerald' as const,
         weeks: [
-          { id: 'bw1', monthNumber: 1, weekNumber: 1, title: 'Week 1 — Python Core & Data Structures', status: 'completed', topics: [
-            { id: 'pb-1', name: 'Python Core & Data Structures', priority: '🔴 Essential', estimatedMinutes: 60, category: 'Core', status: 'completed', mastery: 80, masteryLevel: 'Strong', description: 'Lists, dicts, generators, comprehensions.', resources: this.createResources('Python Core Docs', 'https://docs.python.org', 'Official Python references') }
-          ]},
-          { id: 'bw2', monthNumber: 1, weekNumber: 2, title: 'Week 2 — Object-Oriented Programming (OOP)', status: 'active', topics: [
-            { id: 'pb-2', name: 'OOP Classes & Inheritance', priority: '🔴 Essential', estimatedMinutes: 60, category: 'OOP', status: 'in_progress', mastery: 60, masteryLevel: 'Developing', description: 'Classes, dunder methods, inheritance, polymorphism.', resources: this.createResources('OOP Python Guide', 'https://realpython.com', 'Object-Oriented Design in Python') }
-          ]},
-          { id: 'bw3', monthNumber: 1, weekNumber: 3, title: 'Week 3 — Git & GitHub Workflow', status: 'upcoming', topics: [
-            { id: 'pb-3', name: 'Git Branching & PR Workflows', priority: '🟡 Important', estimatedMinutes: 45, category: 'DevOps', status: 'pending', mastery: 0, masteryLevel: 'Awareness', description: 'Commits, branches, rebase, merge conflicts, pull requests.', resources: this.createResources('Pro Git Book', 'https://git-scm.com', 'Essential version control') }
-          ]}
+          { title: 'Week 1 — Python Core & Data Structures', topicName: 'Lists, Dicts & Memory Management', desc: 'Generators, comprehensions, memory efficiency, primitive vs reference types.', priority: '🔴 Essential' as TopicPriority, cat: 'Core' },
+          { title: 'Week 2 — Object-Oriented Programming (OOP)', topicName: 'Classes, Dunder Methods & Inheritance', desc: 'Class design, dunder methods, inheritance, encapsulation, polymorphism.', priority: '🔴 Essential' as TopicPriority, cat: 'OOP' },
+          { title: 'Week 3 — Modules, Packages & Virtual Envs', topicName: 'Package Management & Virtual Environments', desc: 'pip, poetry, venv, module imports, package distribution.', priority: '🟡 Important' as TopicPriority, cat: 'Tooling' },
+          { title: 'Week 4 — Git & GitHub Team Workflows', topicName: 'Git Branching & Pull Request Workflows', desc: 'Rebase, merge conflicts, Git hooks, conventional commits, PR code reviews.', priority: '🔴 Essential' as TopicPriority, cat: 'DevOps' }
         ]
       },
       {
         monthNumber: 2,
-        title: 'Month 2 — REST APIs & Modern Frameworks (FastAPI/Django)',
-        badgeColor: 'amber',
-        status: 'upcoming',
+        title: 'Month 2 — REST APIs & FastAPI Framework',
+        badgeColor: 'amber' as const,
         weeks: [
-          { id: 'bw4', monthNumber: 2, weekNumber: 4, title: 'Week 4 — HTTP Protocol & REST Principles', status: 'upcoming', topics: [
-            { id: 'pb-4', name: 'HTTP Verbs, Headers & Status Codes', priority: '🔴 Essential', estimatedMinutes: 60, category: 'Networking', status: 'pending', mastery: 0, masteryLevel: 'Awareness', description: 'GET, POST, PUT, DELETE, JSON schemas, headers.', resources: this.createResources('MDN HTTP Guide', 'https://developer.mozilla.org', 'Web architecture standards') }
-          ]},
-          { id: 'bw5', monthNumber: 2, weekNumber: 5, title: 'Week 5 — FastAPI & Pydantic Validation', status: 'upcoming', topics: [
-            { id: 'pb-5', name: 'FastAPI Microservice Development', priority: '🔴 Essential', estimatedMinutes: 90, category: 'Framework', status: 'pending', mastery: 0, masteryLevel: 'Awareness', description: 'Async endpoints, path/query params, Pydantic type validation.', resources: this.createResources('FastAPI Official Docs', 'https://fastapi.tiangolo.com', 'Modern Python Web API') }
-          ]}
+          { title: 'Week 5 — HTTP Protocol & Web Standards', topicName: 'HTTP Verbs, Headers & Status Codes', desc: 'REST principles, request/response lifecycle, JSON payloads, CORS policies.', priority: '🔴 Essential' as TopicPriority, cat: 'Networking' },
+          { title: 'Week 6 — FastAPI Microservice Fundamentals', topicName: 'Async Endpoints & Pydantic Schemas', desc: 'Building high-performance async REST endpoints, request body validation.', priority: '🔴 Essential' as TopicPriority, cat: 'Framework' },
+          { title: 'Week 7 — Dependency Injection & Middleware', topicName: 'FastAPI Dependencies & Custom Middleware', desc: 'Writing modular dependency injectors, logging middleware, exception handlers.', priority: '🟡 Important' as TopicPriority, cat: 'Architecture' },
+          { title: 'Week 8 — REST API Milestone Project', topicName: 'Production-Ready E-Commerce Microservice', desc: 'Building end-to-end REST API with full validation, OpenAPI docs, unit tests.', priority: '🔴 Essential' as TopicPriority, cat: 'Portfolio' }
+        ]
+      },
+      {
+        monthNumber: 3,
+        title: 'Month 3 — Relational Databases, PostgreSQL & ORM',
+        badgeColor: 'cyan' as const,
+        weeks: [
+          { title: 'Week 9 — Relational Database Modeling', topicName: 'PostgreSQL Schema Design & Normalization', desc: '1NF to 3NF normalization, foreign keys, constraints, indexing strategies.', priority: '🔴 Essential' as TopicPriority, cat: 'Database' },
+          { title: 'Week 10 — SQLAlchemy 2.0 Async ORM', topicName: 'SQLAlchemy Models & Async Sessions', desc: 'Defining DB models, executing async queries, eager loading relationships.', priority: '🔴 Essential' as TopicPriority, cat: 'Database' },
+          { title: 'Week 11 — Database Migrations with Alembic', topicName: 'Alembic Migration Scripts & Rollbacks', desc: 'Automating schema migrations, version control for database schemas.', priority: '🟡 Important' as TopicPriority, cat: 'Database' },
+          { title: 'Week 12 — Relational Database Backend Capstone', topicName: 'Database-backed Web Application API', desc: 'Connecting FastAPI to PostgreSQL database with complete CRUD operations.', priority: '🔴 Essential' as TopicPriority, cat: 'Portfolio' }
+        ]
+      },
+      {
+        monthNumber: 4,
+        title: 'Month 4 — Security, Authentication & Authorization',
+        badgeColor: 'purple' as const,
+        weeks: [
+          { title: 'Week 13 — User Password Hashing & Security', topicName: 'Bcrypt Hashing & Salting Patterns', desc: 'Secure user registration, password hashing with bcrypt/argon2, security policies.', priority: '🔴 Essential' as TopicPriority, cat: 'Security' },
+          { title: 'Week 14 — JWT Token Authentication', topicName: 'OAuth2 & JWT Bearer Token Flows', desc: 'Issuing JWT access/refresh tokens, token verification middleware.', priority: '🔴 Essential' as TopicPriority, cat: 'Security' },
+          { title: 'Week 15 — Role-Based Access Control (RBAC)', topicName: 'RBAC Authorization & Scopes', desc: 'Protecting admin endpoints, permission scopes, role check decorators.', priority: '🟡 Important' as TopicPriority, cat: 'Security' },
+          { title: 'Week 16 — Secure Auth Gateway Project', topicName: 'Production User Auth & Identity Gateway', desc: 'Building complete auth microservice with login, token refresh, password reset.', priority: '🔴 Essential' as TopicPriority, cat: 'Portfolio' }
+        ]
+      },
+      {
+        monthNumber: 5,
+        title: 'Month 5 — Asynchronous Tasks, Redis & Caching',
+        badgeColor: 'indigo' as const,
+        weeks: [
+          { title: 'Week 17 — Redis Caching & Key-Value Store', topicName: 'Redis In-Memory Caching Strategies', desc: 'Cache invalidation, TTL expiration, session store, rate limiting.', priority: '🔴 Essential' as TopicPriority, cat: 'Performance' },
+          { title: 'Week 18 — Celery / Arq Background Task Queues', topicName: 'Background Worker Queues & Workers', desc: 'Offloading email sending, video processing to asynchronous worker queues.', priority: '🔴 Essential' as TopicPriority, cat: 'Async Architecture' },
+          { title: 'Week 19 — WebSockets & Real-Time Communication', topicName: 'WebSocket Connections & Pub/Sub', desc: 'Bidirectional real-time socket communication, chat server implementation.', priority: '🟡 Important' as TopicPriority, cat: 'Real-time' },
+          { title: 'Week 20 — Distributed Task Processing Capstone', topicName: 'Real-time Notification & Task Engine', desc: 'Integrating FastAPI + Redis + Celery + WebSockets into cohesive system.', priority: '🔴 Essential' as TopicPriority, cat: 'Portfolio' }
+        ]
+      },
+      {
+        monthNumber: 6,
+        title: 'Month 6 — System Design, Testing & Production Deployment',
+        badgeColor: 'emerald' as const,
+        weeks: [
+          { title: 'Week 21 — Automated Testing with PyTest', topicName: 'PyTest Unit & Integration Testing', desc: 'Writing test fixtures, mocking database sessions, coverage reports.', priority: '🔴 Essential' as TopicPriority, cat: 'Testing' },
+          { title: 'Week 22 — Docker Containerization & Docker Compose', topicName: 'Multi-container Docker Deployments', desc: 'Writing Dockerfiles, orchestrating app + Postgres + Redis with Docker Compose.', priority: '🔴 Essential' as TopicPriority, cat: 'DevOps' },
+          { title: 'Week 23 — Cloud Deployment (AWS / GCP)', topicName: 'Production Cloud Hosting & Nginx Proxy', desc: 'Deploying containers to cloud instances, reverse proxy setup with Nginx.', priority: '🔴 Essential' as TopicPriority, cat: 'DevOps' },
+          { title: 'Week 24 — Backend Engineering Job Clearance', topicName: 'System Design Interview & Capstone Audit', desc: 'System design mock interviews, GitHub portfolio presentation, resume polish.', priority: '🔴 Essential' as TopicPriority, cat: 'Career' }
+        ]
+      },
+      {
+        monthNumber: 7,
+        title: 'Month 7 — Advanced Microservices & Event-Driven Architecture',
+        badgeColor: 'amber' as const,
+        weeks: [
+          { title: 'Week 25 — Microservices Architecture Principles', topicName: 'Service Decomposition & API Gateways', desc: 'Monolith vs Microservices, service boundaries, reverse proxies & API gateways.', priority: '🔴 Essential' as TopicPriority, cat: 'Architecture' },
+          { title: 'Week 26 — Message Brokers with Apache Kafka / RabbitMQ', topicName: 'Event Producer/Consumer Patterns', desc: 'Publish-subscribe queues, message partitioning, guaranteeing at-least-once delivery.', priority: '🔴 Essential' as TopicPriority, cat: 'Event Driven' },
+          { title: 'Week 27 — Distributed Transactions & Saga Pattern', topicName: 'Saga Orchestration & Choreography', desc: 'Handling multi-service transactional rollbacks without 2PC deadlocks.', priority: '🟣 Advanced' as TopicPriority, cat: 'Architecture' },
+          { title: 'Week 28 — Microservices Event Pipeline Capstone', topicName: 'Event-driven Order Processing Engine', desc: 'Building multi-service event pipeline using Kafka/RabbitMQ and FastAPI.', priority: '🔴 Essential' as TopicPriority, cat: 'Portfolio' }
+        ]
+      },
+      {
+        monthNumber: 8,
+        title: 'Month 8 — NoSQL Databases & Search Engines',
+        badgeColor: 'cyan' as const,
+        weeks: [
+          { title: 'Week 29 — MongoDB Document Database', topicName: 'MongoDB Aggregations & Schema Flexibility', desc: 'Document modeling, BSON data types, pipeline aggregation queries.', priority: '🔴 Essential' as TopicPriority, cat: 'NoSQL' },
+          { title: 'Week 30 — Elasticsearch Full-Text Search', topicName: 'Elasticsearch Indexing & Fuzzy Queries', desc: 'Indexing JSON documents, fuzzy search queries, inverted index concepts.', priority: '🟡 Important' as TopicPriority, cat: 'Search' },
+          { title: 'Week 31 — Graph Databases (Neo4j)', topicName: 'Cypher Query Language & Node Relations', desc: 'Modeling highly interconnected social graph data, Cypher pattern matching.', priority: '🔵 Optional' as TopicPriority, cat: 'Graph DB' },
+          { title: 'Week 32 — Hybrid Database Application Capstone', topicName: 'Multi-Database E-Commerce Engine', desc: 'Combining Postgres (relational) + MongoDB (catalog) + Elastic (search).', priority: '🔴 Essential' as TopicPriority, cat: 'Portfolio' }
+        ]
+      },
+      {
+        monthNumber: 9,
+        title: 'Month 9 — Performance Optimization & High Scalability',
+        badgeColor: 'purple' as const,
+        weeks: [
+          { title: 'Week 33 — Database Query Profiling & Indexing', topicName: 'EXPLAIN ANALYZE & Query Tuning', desc: 'Identifying slow query bottlenecks, composite B-tree indexes, connection pooling.', priority: '🔴 Essential' as TopicPriority, cat: 'Performance' },
+          { title: 'Week 34 — Python Async IO Deep Dive (asyncio)', topicName: 'Async Event Loops, Tasks & Concurrency', desc: 'Concurrency vs parallelism, event loop blocking avoidance, CPU vs IO bounds.', priority: '🔴 Essential' as TopicPriority, cat: 'Core' },
+          { title: 'Week 35 — Load Balancing & Horizontal Scaling', topicName: 'Gunicorn, Uvicorn & Worker Scaling', desc: 'Process manager configuration, round-robin load balancing, stateless servers.', priority: '🟡 Important' as TopicPriority, cat: 'Infrastructure' },
+          { title: 'Week 36 — High-Throughput Load Testing Capstone', topicName: 'Locust Load Testing & Benchmark Audit', desc: 'Simulating 10,000 concurrent user requests, latency benchmarking.', priority: '🔴 Essential' as TopicPriority, cat: 'Performance' }
+        ]
+      },
+      {
+        monthNumber: 10,
+        title: 'Month 10 — Observability, Monitoring & Logging',
+        badgeColor: 'indigo' as const,
+        weeks: [
+          { title: 'Week 37 — Structured Logging (structlog / Loguru)', topicName: 'JSON Structured Logging & Context Correlation', desc: 'Contextual request tracking, trace IDs across microservice boundaries.', priority: '🔴 Essential' as TopicPriority, cat: 'Observability' },
+          { title: 'Week 38 — Prometheus Metrics & Grafana Dashboards', topicName: 'Exposing App Metrics & Monitoring', desc: 'Prometheus counter/histogram metrics, building Grafana dashboard alerts.', priority: '🔴 Essential' as TopicPriority, cat: 'Observability' },
+          { title: 'Week 39 — Distributed Tracing with OpenTelemetry', topicName: 'OpenTelemetry Spans & Jaeger Tracing', desc: 'Tracing request bottlenecks across multiple microservices with Jaeger.', priority: '🟡 Important' as TopicPriority, cat: 'Observability' },
+          { title: 'Week 40 — Full Production Observability Capstone', topicName: 'Enterprise Observability Stack Integration', desc: 'Integrating Prometheus + Grafana + OpenTelemetry into backend stack.', priority: '🔴 Essential' as TopicPriority, cat: 'Portfolio' }
+        ]
+      },
+      {
+        monthNumber: 11,
+        title: 'Month 11 — Cloud Infrastructure & Kubernetes',
+        badgeColor: 'emerald' as const,
+        weeks: [
+          { title: 'Week 41 — Kubernetes Core Concepts', topicName: 'K8s Pods, Deployments & Services', desc: 'Writing Kubernetes manifests, managing container clusters, rolling updates.', priority: '🔴 Essential' as TopicPriority, cat: 'DevOps' },
+          { title: 'Week 42 — Infrastructure as Code (Terraform)', topicName: 'Terraform Modules & Cloud Provisioning', desc: 'Automating AWS EC2, RDS, and S3 resource creation with Terraform declarative code.', priority: '🟡 Important' as TopicPriority, cat: 'DevOps' },
+          { title: 'Week 43 — CI/CD Pipeline Automation', topicName: 'GitHub Actions / GitLab CI Pipelines', desc: 'Automating build, test, container push, and Kubernetes deployment.', priority: '🔴 Essential' as TopicPriority, cat: 'DevOps' },
+          { title: 'Week 44 — Cloud Infrastructure Capstone', topicName: 'Automated Kubernetes Deployment', desc: 'Deploying backend platform to cloud Kubernetes cluster with automated CI/CD.', priority: '🔴 Essential' as TopicPriority, cat: 'Portfolio' }
+        ]
+      },
+      {
+        monthNumber: 12,
+        title: 'Month 12 — Senior Backend Engineer & Career Mastery',
+        badgeColor: 'cyan' as const,
+        weeks: [
+          { title: 'Week 45 — Advanced System Design & Distributed Consensus', topicName: 'CAP Theorem, Raft & Distributed Locks', desc: 'Designing resilient distributed systems handling network partitions.', priority: '🔴 Essential' as TopicPriority, cat: 'System Design' },
+          { title: 'Week 46 — Security Auditing & OWASP Compliance', topicName: 'OWASP Top 10 Security Defenses', desc: 'Preventing SQL injection, XSS, CSRF, rate-limit bypasses, secret storage.', priority: '🔴 Essential' as TopicPriority, cat: 'Security' },
+          { title: 'Week 47 — Final Senior Portfolio Review', topicName: 'Complete Codebase Audit & Open Source', desc: 'Reviewing production projects, writing technical architecture documentation.', priority: '🔴 Essential' as TopicPriority, cat: 'Portfolio' },
+          { title: 'Week 48 — Senior Backend Interview & Placement', topicName: 'System Architecture Interview Clearance', desc: 'Mock architectural interviews, resume optimization, job offer negotiation.', priority: '🔴 Essential' as TopicPriority, cat: 'Career' }
         ]
       }
     ];
 
-    if (months >= 3) {
-      result.push({
-        monthNumber: 3,
-        title: 'Month 3 — Relational Databases, PostgreSQL & Authentication',
-        badgeColor: 'cyan',
-        status: 'upcoming',
-        weeks: [
-          { id: 'bw6', monthNumber: 3, weekNumber: 6, title: 'Week 6 — PostgreSQL & SQLAlchemy ORM', status: 'upcoming', topics: [
-            { id: 'pb-6', name: 'PostgreSQL & SQLAlchemy ORM', priority: '🔴 Essential', estimatedMinutes: 90, category: 'Database', status: 'pending', mastery: 0, masteryLevel: 'Awareness', description: 'Models, migrations with Alembic, foreign keys, indexing.', resources: this.createResources('SQLAlchemy Guide', 'https://sqlalchemy.org', 'Python Database ORM') }
-          ]},
-          { id: 'bw7', monthNumber: 3, weekNumber: 7, title: 'Week 7 — JWT Authentication & Security', status: 'upcoming', topics: [
-            { id: 'pb-7', name: 'OAuth2 & JWT User Auth', priority: '🟡 Important', estimatedMinutes: 60, category: 'Security', status: 'pending', mastery: 0, masteryLevel: 'Awareness', description: 'Password hashing (bcrypt), token expiration, middleware protection.', resources: this.createResources('JWT.io Security', 'https://jwt.io', 'Secure token authentication') }
-          ]}
-        ]
-      });
-    }
-
-    return result;
+    return this.buildMonthsFromDefinitions(monthDefinitions, months);
   }
 
-  // PYTHON FOR AUTOMATION
+  // PYTHON FOR AUTOMATION (Full 1 to 12 months, 4 weeks per month)
   private static buildPythonAutomationCurriculum(months: number, level: string): RoadmapMonth[] {
-    return [
+    const monthDefinitions = [
       {
         monthNumber: 1,
-        title: 'Month 1 — Scripting, File I/O & Requests API',
-        badgeColor: 'emerald',
-        status: 'active',
+        title: 'Month 1 — Scripting, File I/O & OS Automation',
+        badgeColor: 'emerald' as const,
         weeks: [
-          { id: 'aw1', monthNumber: 1, weekNumber: 1, title: 'Week 1 — Python Scripting & OS Module', status: 'completed', topics: [
-            { id: 'pa-1', name: 'File Handling & OS Automation', priority: '🔴 Essential', estimatedMinutes: 60, category: 'Scripting', status: 'completed', mastery: 90, masteryLevel: 'Strong', description: 'Automating file renaming, folder organization, environment variables.', resources: this.createResources('Automate the Boring Stuff', 'https://automatetheboringstuff.com', 'Practical Python automation') }
-          ]},
-          { id: 'aw2', monthNumber: 1, weekNumber: 2, title: 'Week 2 — Web Requests & API Scraping', status: 'active', topics: [
-            { id: 'pa-2', name: 'Requests & BeautifulSoup Scraping', priority: '🔴 Essential', estimatedMinutes: 60, category: 'Scraping', status: 'in_progress', mastery: 50, masteryLevel: 'Developing', description: 'Fetching web pages, parsing HTML DOM, extracting text and tables.', resources: this.createResources('BS4 Documentation', 'https://www.crummy.com', 'HTML parsing with Python') }
-          ]}
+          { title: 'Week 1 — Python Scripting & OS Module', topicName: 'OS, sys & Pathlib Automation', desc: 'Automating file renaming, folder organization, environment variables.', priority: '🔴 Essential' as TopicPriority, cat: 'Scripting' },
+          { title: 'Week 2 — Text Manipulation & Regular Expressions', topicName: 'Regex Extraction & Text Parsing', desc: 'Extracting emails, URLs, dates, and log patterns using re module.', priority: '🔴 Essential' as TopicPriority, cat: 'Scripting' },
+          { title: 'Week 3 — File I/O & Excel/CSV Manipulation', topicName: 'OpenPyXL & CSV Data Automation', desc: 'Automating Excel spreadsheet creation, cell styling, formulas.', priority: '🔴 Essential' as TopicPriority, cat: 'Automation' },
+          { title: 'Week 4 — Desktop File Organizer Project', topicName: 'Automated Directory & File Cleaning Tool', desc: 'Building CLI tool that sorts messy downloads by file type and date.', priority: '🔴 Essential' as TopicPriority, cat: 'Portfolio' }
         ]
       },
       {
         monthNumber: 2,
-        title: 'Month 2 — Web Automation (Selenium/Playwright) & Cron Scheduling',
-        badgeColor: 'amber',
-        status: 'upcoming',
+        title: 'Month 2 — Web Scraping & API Automation',
+        badgeColor: 'amber' as const,
         weeks: [
-          { id: 'aw3', monthNumber: 2, weekNumber: 3, title: 'Week 3 — Playwright Headless Browser Control', status: 'upcoming', topics: [
-            { id: 'pa-3', name: 'Playwright Browser Automation', priority: '🔴 Essential', estimatedMinutes: 90, category: 'Automation', status: 'pending', mastery: 0, masteryLevel: 'Awareness', description: 'Clicking, typing, submitting forms, taking screenshots, handling captchas.', resources: this.createResources('Playwright Python Docs', 'https://playwright.dev/python', 'Modern browser automation') }
-          ]}
+          { title: 'Week 5 — Requests & Web Scraping Fundamentals', topicName: 'HTTP Requests & HTML DOM Parsing', desc: 'Fetching web pages, handling user agents, parsing tables with BeautifulSoup.', priority: '🔴 Essential' as TopicPriority, cat: 'Scraping' },
+          { title: 'Week 6 — Playwright Modern Browser Control', topicName: 'Playwright Headless Automation', desc: 'Automating login forms, button clicks, screenshot capture, PDF generation.', priority: '🔴 Essential' as TopicPriority, cat: 'Web Automation' },
+          { title: 'Week 7 — Handling Captchas & Dynamic Content', topicName: 'Dynamic SPA Scraping & Anti-bot Bypassing', desc: 'Scraping single-page React apps, rate limiting, proxy rotation.', priority: '🟡 Important' as TopicPriority, cat: 'Scraping' },
+          { title: 'Week 8 — Automated Price Monitoring Bot', topicName: 'Real-time Web Scraper & Price Tracker', desc: 'Building bot that monitors product prices and sends email/Telegram alerts.', priority: '🔴 Essential' as TopicPriority, cat: 'Portfolio' }
+        ]
+      },
+      {
+        monthNumber: 3,
+        title: 'Month 3 — Task Scheduling, GUI & System Bot Capstone',
+        badgeColor: 'cyan' as const,
+        weeks: [
+          { title: 'Week 9 — Task Scheduling (Cron & Schedule module)', topicName: 'Cron Jobs & Scheduled Execution', desc: 'Running Python scripts periodically in background on Windows/Linux.', priority: '🔴 Essential' as TopicPriority, cat: 'Scheduling' },
+          { title: 'Week 10 — Desktop GUI Automation (PyAutoGUI)', topicName: 'Mouse & Keyboard Desktop Control', desc: 'Simulating mouse clicks, key presses, image recognition on screen.', priority: '🟡 Important' as TopicPriority, cat: 'Desktop Automation' },
+          { title: 'Week 11 — Email & Telegram Bot Integration', topicName: 'SMTPLib, Email & Telegram Bot APIs', desc: 'Automating daily status reports, sending attachments, receiving bot commands.', priority: '🔴 Essential' as TopicPriority, cat: 'Bots' },
+          { title: 'Week 12 — End-to-End Enterprise Automation Bot', topicName: 'Autonomous Workflow Bot Capstone', desc: 'Building comprehensive bot that scrapes, processes, generates reports, emails.', priority: '🔴 Essential' as TopicPriority, cat: 'Portfolio' }
         ]
       }
     ];
+
+    // Pad up to 12 months using generic generator pattern if needed
+    return this.buildMonthsFromDefinitions(monthDefinitions, months);
   }
 
-  // PYTHON FOR DATA SCIENCE
+  // PYTHON FOR DATA SCIENCE (Full 1 to 12 months, 4 weeks per month)
   private static buildPythonDataScienceCurriculum(months: number, level: string): RoadmapMonth[] {
-    return [
+    const monthDefinitions = [
       {
         monthNumber: 1,
         title: 'Month 1 — Math, Linear Algebra & NumPy/Pandas',
-        badgeColor: 'emerald',
-        status: 'active',
+        badgeColor: 'emerald' as const,
         weeks: [
-          { id: 'dsw1', monthNumber: 1, weekNumber: 1, title: 'Week 1 — Linear Algebra & Calculus Basics', status: 'completed', topics: [
-            { id: 'pds-1', name: 'Vectors, Matrices & Derivatives', priority: '🔴 Essential', estimatedMinutes: 60, category: 'Math', status: 'completed', mastery: 75, masteryLevel: 'Proficient', description: 'Matrix multiplication, eigenvalues, gradient descent intuition.', resources: this.createResources('3Blue1Brown Linear Algebra', 'https://youtube.com', 'Visual math intuitions') }
-          ]}
+          { title: 'Week 1 — Linear Algebra & Calculus Basics', topicName: 'Vectors, Matrices & Derivatives', desc: 'Matrix multiplication, eigenvalues, gradient descent intuition.', priority: '🔴 Essential' as TopicPriority, cat: 'Math' },
+          { title: 'Week 2 — NumPy Vectorized Computation', topicName: 'Multidimensional Array Computing', desc: 'ND-array manipulation, broadcasting, mathematical functions.', priority: '🔴 Essential' as TopicPriority, cat: 'Core Data Science' },
+          { title: 'Week 3 — Pandas Data Wrangling & Cleaning', topicName: 'DataFrames, Indexing & Missing Data', desc: 'Data cleaning, feature transformation, handling null values.', priority: '🔴 Essential' as TopicPriority, cat: 'Core Data Science' },
+          { title: 'Week 4 — Exploratory Data Analysis Capstone', topicName: 'EDA Portfolio Project', desc: 'Conducting comprehensive EDA on real-world dataset with visuals.', priority: '🔴 Essential' as TopicPriority, cat: 'Portfolio' }
         ]
       },
       {
         monthNumber: 2,
         title: 'Month 2 — Machine Learning with Scikit-Learn',
-        badgeColor: 'amber',
-        status: 'upcoming',
+        badgeColor: 'amber' as const,
         weeks: [
-          { id: 'dsw2', monthNumber: 2, weekNumber: 2, title: 'Week 2 — Supervised Learning Algorithms', status: 'upcoming', topics: [
-            { id: 'pds-2', name: 'Linear Regression & Decision Trees', priority: '🔴 Essential', estimatedMinutes: 90, category: 'ML', status: 'pending', mastery: 0, masteryLevel: 'Awareness', description: 'Model training, train/test split, cross-validation, RMSE.', resources: this.createResources('Scikit-Learn User Guide', 'https://scikit-learn.org', 'Standard ML framework') }
-          ]}
+          { title: 'Week 5 — Supervised Learning (Regression)', topicName: 'Linear & Polynomial Regression', desc: 'Model training, MSE/RMSE metrics, regularized Ridge/Lasso regression.', priority: '🔴 Essential' as TopicPriority, cat: 'Machine Learning' },
+          { title: 'Week 6 — Supervised Learning (Classification)', topicName: 'Logistic Regression & Decision Trees', desc: 'Classification metrics, confusion matrix, precision, recall, F1-score.', priority: '🔴 Essential' as TopicPriority, cat: 'Machine Learning' },
+          { title: 'Week 7 — Ensemble Models (Random Forest & XGBoost)', topicName: 'Random Forests & Gradient Boosting', desc: 'Tree ensembling, hyperparameter tuning with GridSearchCV, feature importance.', priority: '🔴 Essential' as TopicPriority, cat: 'Machine Learning' },
+          { title: 'Week 8 — Machine Learning Capstone', topicName: 'End-to-End Predictive Model Project', desc: 'Building, tuning, and evaluating complete predictive ML model.', priority: '🔴 Essential' as TopicPriority, cat: 'Portfolio' }
+        ]
+      },
+      {
+        monthNumber: 3,
+        title: 'Month 3 — Deep Learning & Neural Networks',
+        badgeColor: 'cyan' as const,
+        weeks: [
+          { title: 'Week 9 — Neural Network Fundamentals', topicName: 'Perceptrons, Activations & Backpropagation', desc: 'Forward pass, loss functions, Adam optimizer, gradient backpropagation.', priority: '🔴 Essential' as TopicPriority, cat: 'Deep Learning' },
+          { title: 'Week 10 — PyTorch Framework Basics', topicName: 'PyTorch Tensors & Custom Modules', desc: 'Building neural network architectures using PyTorch nn.Module.', priority: '🔴 Essential' as TopicPriority, cat: 'Deep Learning' },
+          { title: 'Week 11 — Convolutional Neural Networks (CNNs)', topicName: 'Image Classification with CNNs', desc: 'Convolutional layers, pooling, transfer learning with ResNet.', priority: '🟡 Important' as TopicPriority, cat: 'Computer Vision' },
+          { title: 'Week 12 — Deep Learning Vision Capstone', topicName: 'Image Classification & Object Recognition', desc: 'Building image classifier deployed as web application.', priority: '🔴 Essential' as TopicPriority, cat: 'Portfolio' }
         ]
       }
     ];
+
+    return this.buildMonthsFromDefinitions(monthDefinitions, months);
   }
 
   // GENERAL PYTHON
@@ -362,75 +497,151 @@ export class RoadmapEngine {
     return this.buildPythonDataAnalystCurriculum(months, level);
   }
 
-  // GENERIC CURRICULUM GENERATOR FOR ANY OTHER SKILL (e.g. Web Dev, Marketing, Excel, SSC CGL)
+  // GENERIC CURRICULUM GENERATOR FOR ANY OTHER SKILL (Web Dev, Marketing, Excel, SSC CGL, Finance, Java, etc.)
   private static buildGenericCurriculum(skill: string, goal: string, months: number, level: string): RoadmapMonth[] {
     const result: RoadmapMonth[] = [];
 
-    const monthConfigs = [
-      { num: 1, title: `Month 1 — ${skill} Fundamentals & Core Syntax`, color: 'emerald' as const },
-      { num: 2, title: `Month 2 — ${skill} Intermediate Concepts & Tools`, color: 'amber' as const },
-      { num: 3, title: `Month 3 — ${goal} Practical Projects & Mastery`, color: 'cyan' as const },
-      { num: 4, title: `Month 4 — Advanced ${skill} & System Architecture`, color: 'purple' as const },
-      { num: 5, title: `Month 5 — Specialization & Optimization`, color: 'indigo' as const },
-      { num: 6, title: `Month 6 — Career Placement & Portfolio`, color: 'emerald' as const }
+    const badgeColors: ('emerald' | 'amber' | 'cyan' | 'purple' | 'indigo')[] = [
+      'emerald', 'amber', 'cyan', 'purple', 'indigo', 'emerald', 'amber', 'cyan', 'purple', 'indigo', 'emerald', 'amber'
     ];
 
-    for (let m = 1; m <= Math.min(months, monthConfigs.length); m++) {
-      const cfg = monthConfigs[m - 1];
+    for (let m = 1; m <= months; m++) {
+      const weeks: RoadmapModule[] = [];
+      for (let w = 1; w <= 4; w++) {
+        const globalWeekNum = (m - 1) * 4 + w;
+        const topicPriority: TopicPriority = w === 1 || w === 4 ? '🔴 Essential' : w === 2 ? '🟡 Important' : '🔵 Optional';
+        
+        weeks.push({
+          id: `gen-w-${m}-${w}`,
+          monthNumber: m,
+          weekNumber: globalWeekNum,
+          title: `Week ${globalWeekNum} — ${skill} Module ${m}.${w}`,
+          status: m === 1 && w === 1 ? 'active' : 'upcoming',
+          topics: [
+            {
+              id: `gen-top-${m}-${w}`,
+              name: `${skill} Core Concepts & Implementation (${m}.${w})`,
+              priority: topicPriority,
+              estimatedMinutes: 60,
+              category: w === 4 ? 'Portfolio Project' : 'Core Concept',
+              status: m === 1 && w === 1 ? 'in_progress' : 'pending',
+              mastery: m === 1 && w === 1 ? 35 : 0,
+              masteryLevel: m === 1 && w === 1 ? 'Developing' : 'Awareness',
+              description: w === 4 
+                ? `Build hands-on milestone project consolidating Week ${globalWeekNum - 3} to ${globalWeekNum} concepts.`
+                : `Master key principles, best practices, and hands-on exercises for ${skill}.`,
+              resources: this.createResources(`${skill} Official Guide`, 'https://google.com', `Essential starter guide for ${skill}`)
+            }
+          ]
+        });
+      }
+
       result.push({
         monthNumber: m,
-        title: cfg.title,
-        badgeColor: cfg.color,
+        title: `Month ${m} — ${skill} Phase ${m}: ${m === 1 ? 'Foundations & Basics' : m === 2 ? 'Intermediate Practice' : m === 3 ? 'Advanced Systems & Projects' : 'Specialization & Career Mastery'}`,
+        badgeColor: badgeColors[(m - 1) % badgeColors.length],
         status: m === 1 ? 'active' : 'upcoming',
-        weeks: [
-          {
-            id: `gen-w-${m}-1`,
-            monthNumber: m,
-            weekNumber: (m - 1) * 4 + 1,
-            title: `Week ${(m - 1) * 4 + 1} — ${skill} Module ${m}.1`,
-            status: m === 1 ? 'active' : 'upcoming',
-            topics: [
-              {
-                id: `gen-top-${m}-1`,
-                name: `${skill} Core Principles & Best Practices (${m}.1)`,
-                priority: '🔴 Essential',
-                estimatedMinutes: 60,
-                category: 'Foundations',
-                status: m === 1 ? 'in_progress' : 'pending',
-                mastery: m === 1 ? 40 : 0,
-                masteryLevel: m === 1 ? 'Developing' : 'Awareness',
-                description: `Fundamental theoretical and practical concepts of ${skill}.`,
-                resources: this.createResources(`${skill} Official Guide`, 'https://google.com', `Essential starter guide for ${skill}`)
-              }
-            ]
-          },
-          {
-            id: `gen-w-${m}-2`,
-            monthNumber: m,
-            weekNumber: (m - 1) * 4 + 2,
-            title: `Week ${(m - 1) * 4 + 2} — Applied Practice & ${skill} Workflows`,
-            status: 'upcoming',
-            topics: [
-              {
-                id: `gen-top-${m}-2`,
-                name: `Hands-on ${skill} Implementation (${m}.2)`,
-                priority: '🟡 Important',
-                estimatedMinutes: 60,
-                category: 'Practice',
-                status: 'pending',
-                mastery: 0,
-                masteryLevel: 'Awareness',
-                description: `Building real components using ${skill}.`,
-                resources: this.createResources(`${skill} Practice Lab`, 'https://google.com', `Interactive exercises for ${skill}`)
-              }
-            ]
-          }
-        ]
+        weeks
       });
     }
 
     return result;
   }
+
+  /**
+   * Helper to build RoadmapMonth array from structured definitions up to requested months.
+   */
+  private static buildMonthsFromDefinitions(
+    definitions: Array<{
+      monthNumber: number;
+      title: string;
+      badgeColor: 'emerald' | 'amber' | 'cyan' | 'purple' | 'indigo';
+      weeks: Array<{ title: string; topicName: string; desc: string; priority: TopicPriority; cat: string }>;
+    }>,
+    targetMonthsCount: number
+  ): RoadmapMonth[] {
+    const result: RoadmapMonth[] = [];
+
+    for (let m = 1; m <= targetMonthsCount; m++) {
+      const def = definitions.find(d => d.monthNumber === m);
+      
+      if (def) {
+        const weeks: RoadmapModule[] = def.weeks.map((wDef, idx) => {
+          const globalWeekNum = (m - 1) * 4 + (idx + 1);
+          const topicId = `top-m${m}-w${idx + 1}`;
+          
+          return {
+            id: `w-${m}-${idx + 1}`,
+            monthNumber: m,
+            weekNumber: globalWeekNum,
+            title: wDef.title,
+            status: m === 1 && idx === 0 ? 'completed' : m === 1 && idx === 1 ? 'active' : 'upcoming',
+            topics: [
+              {
+                id: topicId,
+                name: wDef.topicName,
+                priority: wDef.priority,
+                estimatedMinutes: 60,
+                category: wDef.cat,
+                status: m === 1 && idx === 0 ? 'completed' : m === 1 && idx === 1 ? 'in_progress' : 'pending',
+                mastery: m === 1 && idx === 0 ? 85 : m === 1 && idx === 1 ? 50 : 0,
+                masteryLevel: m === 1 && idx === 0 ? 'Strong' : m === 1 && idx === 1 ? 'Developing' : 'Awareness',
+                description: wDef.desc,
+                resources: this.createResources(wDef.topicName, 'https://docs.python.org', wDef.desc)
+              }
+            ]
+          };
+        });
+
+        result.push({
+          monthNumber: m,
+          title: def.title,
+          badgeColor: def.badgeColor,
+          status: m === 1 ? 'active' : 'upcoming',
+          weeks
+        });
+      } else {
+        // Generate fallback month for months > defined length
+        const weeks: RoadmapModule[] = [];
+        for (let w = 1; w <= 4; w++) {
+          const globalWeekNum = (m - 1) * 4 + w;
+          weeks.push({
+            id: `w-gen-${m}-${w}`,
+            monthNumber: m,
+            weekNumber: globalWeekNum,
+            title: `Week ${globalWeekNum} — Advanced Module ${m}.${w}`,
+            status: 'upcoming',
+            topics: [
+              {
+                id: `top-gen-${m}-${w}`,
+                name: `Advanced Field Mastery & Project ${m}.${w}`,
+                priority: w === 4 ? '🔴 Essential' : '🟡 Important',
+                estimatedMinutes: 60,
+                category: w === 4 ? 'Portfolio' : 'Specialization',
+                status: 'pending',
+                mastery: 0,
+                masteryLevel: 'Awareness',
+                description: `Specialized domain project and advanced practical problem solving.`,
+                resources: this.createResources('Advanced Mastery Guide', 'https://google.com', 'Domain reference guide')
+              }
+            ]
+          });
+        }
+
+        const badgeColors: ('emerald' | 'amber' | 'cyan' | 'purple' | 'indigo')[] = ['emerald', 'amber', 'cyan', 'purple', 'indigo'];
+        result.push({
+          monthNumber: m,
+          title: `Month ${m} — Specialized Industry Practice & Career Mastery`,
+          badgeColor: badgeColors[(m - 1) % badgeColors.length],
+          status: 'upcoming',
+          weeks
+        });
+      }
+    }
+
+    return result;
+  }
+
 
   /**
    * Generates level-aware projects with prerequisites and suggested stack
