@@ -5,9 +5,11 @@
   --foreground: #f8fafc;
   --card: #070c17;
   --card-border: rgba(6, 182, 212, 0.2);
-  --primary: #06b6d4;
-  --accent-cyan: #22d3ee;
+  --primary: #f97316;
+  --accent-orange: #fb923c;
+  --flame-orange: #ea580c;
   --cyan-glow: rgba(6, 182, 212, 0.25);
+  --orange-glow: rgba(249, 115, 22, 0.35);
 }
 
 body {
@@ -16,6 +18,93 @@ body {
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
   min-height: 100vh;
+}
+
+/* REALISTIC BACKWARD FLAME ANIMATION KEYFRAMES */
+@keyframes flame-flicker {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(1) translateY(0) rotate(-1deg);
+    filter: blur(14px) brightness(1);
+  }
+  25% {
+    opacity: 0.95;
+    transform: scale(1.08) translateY(-6px) rotate(1deg);
+    filter: blur(10px) brightness(1.3);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(0.96) translateY(-12px) rotate(-2deg);
+    filter: blur(16px) brightness(1.1);
+  }
+  75% {
+    opacity: 1;
+    transform: scale(1.05) translateY(-4px) rotate(1.5deg);
+    filter: blur(12px) brightness(1.4);
+  }
+}
+
+@keyframes ember-float {
+  0% {
+    transform: translateY(0) scale(0.6) rotate(0deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.9;
+  }
+  80% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(-160px) scale(1.4) rotate(45deg);
+    opacity: 0;
+  }
+}
+
+@keyframes flame-pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(249, 115, 22, 0.4), 0 0 50px rgba(234, 88, 12, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 35px rgba(249, 115, 22, 0.7), 0 0 80px rgba(251, 146, 60, 0.4);
+  }
+}
+
+/* HIGH-ENERGY ORANGE BUTTON UTILITIES */
+.btn-orange {
+  background: linear-gradient(135deg, #fb923c 0%, #f97316 50%, #ea580c 100%);
+  color: #02040a;
+  font-weight: 900;
+  border: 1px solid rgba(254, 215, 170, 0.4);
+  box-shadow: 0 4px 20px rgba(249, 115, 22, 0.4), 0 0 35px rgba(234, 88, 12, 0.25);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-orange:hover {
+  background: linear-gradient(135deg, #ffedd5 0%, #fb923c 40%, #f97316 100%);
+  color: #000000;
+  box-shadow: 0 6px 30px rgba(249, 115, 22, 0.7), 0 0 55px rgba(251, 146, 60, 0.5);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.btn-orange:active {
+  transform: translateY(0) scale(0.97);
+}
+
+/* REALISTIC BACKWARD FLAME AURA CONTAINER */
+.flame-aura {
+  position: relative;
+}
+
+.flame-aura::before {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.35) 0%, rgba(234, 88, 12, 0.15) 50%, transparent 75%);
+  border-radius: 9999px;
+  animation: flame-flicker 4s infinite ease-in-out;
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* Glassmorphism Surface Utility - Cyan Black Theme */
@@ -36,21 +125,8 @@ body {
 }
 
 .glass-card:hover {
-  border-color: rgba(6, 182, 212, 0.5);
-  box-shadow: 0 8px 30px -4px rgba(6, 182, 212, 0.25);
-}
-
-.glass-card-active {
-  background: linear-gradient(135deg, rgba(8, 28, 44, 0.85) 0%, rgba(4, 10, 20, 0.95) 100%);
-  border: 1px solid rgba(34, 211, 238, 0.45);
-  box-shadow: 0 0 25px 0 rgba(6, 182, 212, 0.3);
-}
-
-/* Recommendation Hero Gradient Card - Cyan Black Neon */
-.ai-recommendation-card {
-  background: linear-gradient(135deg, rgba(8, 28, 44, 0.9) 0%, rgba(5, 10, 20, 0.95) 50%, rgba(6, 182, 212, 0.2) 100%);
-  border: 1px solid rgba(6, 182, 212, 0.45);
-  box-shadow: 0 10px 40px -10px rgba(6, 182, 212, 0.3);
+  border-color: rgba(249, 115, 22, 0.5);
+  box-shadow: 0 8px 30px -4px rgba(249, 115, 22, 0.3);
 }
 
 /* Custom Scrollbar */
@@ -64,10 +140,10 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #0e3748;
+  background: #1e293b;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #06b6d4;
+  background: #f97316;
 }

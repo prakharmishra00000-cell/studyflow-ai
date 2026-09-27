@@ -10,6 +10,8 @@ import { useStudyStore } from '@/lib/store/StudyContext';
 import { AIGenerationModal } from '@/components/common/AIGenerationModal';
 import { CurrentLevel, GoalType, DurationOption, TimeDedicatedOption } from '@/lib/types';
 
+import FlameBackground from '@/components/common/FlameBackground';
+
 export default function LandingPage() {
   const router = useRouter();
   const { generateRoadmap, isGenerating, generationStep, loadScenario } = useStudyStore();
@@ -69,9 +71,9 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#060811] text-slate-100 flex flex-col justify-between selection:bg-cyan-500 selection:text-slate-950 relative overflow-hidden">
-      {/* Dynamic Background Glows */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[500px] bg-gradient-to-b from-cyan-600/15 via-indigo-600/10 to-transparent rounded-full blur-[140px] pointer-events-none" />
+    <div className="min-h-screen bg-[#02040a] text-slate-100 flex flex-col justify-between selection:bg-orange-500 selection:text-slate-950 relative overflow-hidden">
+      {/* Realistic Backward Flame Particle Aura */}
+      <FlameBackground />
 
       {/* Header */}
       <header className="border-b border-slate-800/80 bg-[#060811]/80 backdrop-blur-xl sticky top-0 z-40 px-6 lg:px-12 py-4 flex items-center justify-between">
@@ -260,10 +262,10 @@ export default function LandingPage() {
           <div className="pt-4">
             <button
               type="submit"
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-cyan-500 via-indigo-600 to-emerald-400 text-slate-950 font-black text-base shadow-xl shadow-cyan-500/25 hover:brightness-110 active:scale-[0.99] transition-all flex items-center justify-center gap-2.5"
+              className="w-full py-4 rounded-2xl btn-orange text-slate-950 font-black text-base flex items-center justify-center gap-2.5 active:scale-[0.99] transition-all"
             >
-              <Sparkles className="w-5 h-5 text-slate-950" />
-              <span>✨ Generate My Roadmap</span>
+              <Flame className="w-5 h-5 text-slate-950 fill-current animate-pulse" />
+              <span>🔥 Generate My Roadmap</span>
             </button>
           </div>
         </form>

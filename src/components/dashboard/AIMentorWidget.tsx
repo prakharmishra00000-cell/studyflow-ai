@@ -134,14 +134,14 @@ export default function AIMentorWidget() {
           <button
             type="submit"
             disabled={isAsking || !userPrompt.trim()}
-            className="px-5 py-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-cyan-500 hover:brightness-110 disabled:opacity-50 text-white font-extrabold text-xs shadow-lg shadow-indigo-600/30 transition-all flex items-center gap-2 active:scale-95"
+            className="px-5 py-3 rounded-2xl btn-orange disabled:opacity-50 text-slate-950 font-black text-xs flex items-center gap-2 active:scale-95 transition-all"
           >
             {isAsking ? (
-              <RefreshCw className="w-4 h-4 animate-spin" />
+              <RefreshCw className="w-4 h-4 animate-spin text-slate-950" />
             ) : (
               <>
                 <span>Ask AI</span>
-                <Send className="w-3.5 h-3.5" />
+                <Send className="w-3.5 h-3.5 text-slate-950" />
               </>
             )}
           </button>

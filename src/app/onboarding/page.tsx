@@ -8,6 +8,8 @@ import { Sparkles, ArrowRight, ArrowLeft, CheckCircle2, Clock, Target, Calendar,
 import { NexronLogo } from '@/components/common/NexronLogo';
 import { AIGenerationModal } from '@/components/common/AIGenerationModal';
 
+import FlameBackground from '@/components/common/FlameBackground';
+
 export default function OnboardingPage() {
   const router = useRouter();
   const { generateRoadmap, isGenerating, generationStep } = useStudyStore();
@@ -243,9 +245,9 @@ export default function OnboardingPage() {
               </button>
               <button
                 onClick={handleFinish}
-                className="flex-1 py-4 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 hover:brightness-110 text-white font-extrabold text-sm shadow-xl shadow-indigo-600/40 transition-all flex items-center justify-center gap-2 active:scale-95"
+                className="flex-1 py-4 rounded-2xl btn-orange text-slate-950 font-black text-sm flex items-center justify-center gap-2 active:scale-95"
               >
-                <Zap className="w-4 h-4 text-cyan-400" />
+                <Zap className="w-4 h-4 text-slate-950 fill-current" />
                 <span>Generate Living AI Roadmap</span>
               </button>
             </div>

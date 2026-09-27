@@ -129,9 +129,9 @@ export default function UserControlModal() {
 
             <button
               onClick={applyRecommendation}
-              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 hover:brightness-110 text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-indigo-600/30 transition-all flex items-center justify-center gap-2 active:scale-95"
+              className="w-full sm:w-auto px-6 py-3 rounded-xl btn-orange text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 active:scale-95"
             >
-              <CheckCircle2 className="w-4.5 h-4.5" />
+              <CheckCircle2 className="w-4.5 h-4.5 text-slate-950" />
               <span>Apply Changes</span>
             </button>
           </div>
