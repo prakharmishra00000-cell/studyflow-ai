@@ -15,7 +15,7 @@ export const AIMentorDrawer: React.FC = () => {
   const [messages, setMessages] = useState<Array<{ sender: 'user' | 'ai'; text: string }>>([
     {
       sender: 'ai',
-      text: `👋 Hi! I'm your **STUDYFLOW AI Mentor**.\n\nI am continuously monitoring your **${roadmap?.overview?.skill || 'Python'} → ${roadmap?.overview?.careerGoal || 'Data Analyst'}** roadmap.\n\nWhat can I help you master today?`
+      text: `👋 Hi! I'm your **NEXRON AI Mentor**.\n\nI am continuously monitoring your **${roadmap?.overview?.skill || 'Python'} → ${roadmap?.overview?.careerGoal || 'Data Analyst'}** roadmap.\n\nWhat can I help you master today?`
     }
   ]);
   const [inputText, setInputText] = useState('');
@@ -90,7 +90,7 @@ export const AIMentorDrawer: React.FC = () => {
                 </div>
                 <div>
                   <h4 className="font-extrabold text-sm text-white flex items-center gap-1.5">
-                    <span>STUDYFLOW AI Mentor</span>
+                    <span>NEXRON AI Mentor</span>
                     <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
                   </h4>
                   <p className="text-[10px] text-slate-400">Context-Aware Learning Companion</p>

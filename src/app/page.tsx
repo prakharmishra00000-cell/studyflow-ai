@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { 
   Sparkles, ArrowRight, Clock, Award, Target, Calendar, Flame, CheckCircle2, Zap, PlayCircle
 } from 'lucide-react';
-import { StudyFlowLogo } from '@/components/common/StudyFlowLogo';
+import { NexronLogo } from '@/components/common/NexronLogo';
 import { useStudyStore } from '@/lib/store/StudyContext';
 import { AIGenerationModal } from '@/components/common/AIGenerationModal';
 import { CurrentLevel, GoalType, DurationOption, TimeDedicatedOption } from '@/lib/types';
@@ -75,7 +75,7 @@ export default function LandingPage() {
 
       {/* Header */}
       <header className="border-b border-slate-800/80 bg-[#060811]/80 backdrop-blur-xl sticky top-0 z-40 px-6 lg:px-12 py-4 flex items-center justify-between">
-        <StudyFlowLogo size="md" />
+        <NexronLogo size="md" />
 
         <div className="flex items-center gap-3">
           <button
@@ -319,7 +319,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="border-t border-slate-800/80 bg-[#060811] py-8 text-center text-xs text-slate-500">
-        <p>STUDYFLOW AI — Living AI Learning Roadmap & Career Mentor.</p>
+        <p>NEXRON AI — Living AI Learning Roadmap & Career Mentor.</p>
       </footer>
 
       {/* AI Generation Animation Modal */}

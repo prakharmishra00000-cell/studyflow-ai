@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useStudyStore } from '@/lib/store/StudyContext';
 import { CurrentLevel, GoalType, DurationOption, TimeDedicatedOption } from '@/lib/types';
 import { Sparkles, ArrowRight, ArrowLeft, CheckCircle2, Clock, Target, Calendar, BookOpen, Layers, Bot, Zap } from 'lucide-react';
-import { StudyFlowLogo } from '@/components/common/StudyFlowLogo';
+import { NexronLogo } from '@/components/common/NexronLogo';
 import { AIGenerationModal } from '@/components/common/AIGenerationModal';
 
 export default function OnboardingPage() {
@@ -39,7 +39,7 @@ export default function OnboardingPage() {
 
       {/* Top Header */}
       <div className="max-w-2xl w-full mx-auto flex items-center justify-between z-10">
-        <StudyFlowLogo size="md" />
+        <NexronLogo size="md" />
 
         <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
           <span>Step {step} of 3</span>
@@ -255,7 +255,7 @@ export default function OnboardingPage() {
 
       {/* Footer */}
       <div className="text-center text-xs text-slate-500 z-10">
-        STUDYFLOW AI • Learn Anything. Your Way.
+        NEXRON AI • Learn Anything. Your Way.
       </div>
 
       {/* AI Generation Modal Overlay */}

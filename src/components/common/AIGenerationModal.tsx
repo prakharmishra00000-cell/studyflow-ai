@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, CheckCircle2, Loader2 } from 'lucide-react';
-import { StudyFlowLogo } from './StudyFlowLogo';
+import { NexronLogo } from './NexronLogo';
 
 interface AIGenerationModalProps {
   isOpen: boolean;
@@ -38,7 +38,7 @@ export const AIGenerationModal: React.FC<AIGenerationModalProps> = ({ isOpen, st
 
           {/* Logo header */}
           <div className="flex justify-center">
-            <StudyFlowLogo size="lg" showText={false} />
+            <NexronLogo size="lg" showText={false} />
           </div>
 
           <div className="space-y-2">
@@ -47,7 +47,7 @@ export const AIGenerationModal: React.FC<AIGenerationModalProps> = ({ isOpen, st
               <span>Building Your Learning Journey...</span>
             </h3>
             <p className="text-xs text-slate-400">
-              STUDYFLOW AI is crafting your dynamic adaptive roadmap
+              NEXRON AI is crafting your dynamic adaptive roadmap
             </p>
           </div>
 

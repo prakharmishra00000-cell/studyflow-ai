@@ -50,7 +50,7 @@ export class StudyAI {
     const ai = this.getClient(apiKey);
     if (ai) {
       try {
-        const contextPrompt = `You are STUDYFLOW AI, an intelligent personal AI learning mentor.
+        const contextPrompt = `You are NEXRON AI, an intelligent personal AI learning mentor.
 User's Current Roadmap Context:
 - Active Skill: ${skill}
 - Career Goal: ${goal}
@@ -140,7 +140,7 @@ For a **${goal}** career path:
 *Yes! Learning Pandas gives you great intuition for how tabular data works, making SQL JOINs and GROUP BY queries much easier to master!*`;
     }
 
-    return `### 🤖 STUDYFLOW AI Mentor
+    return `### 🤖 NEXRON AI Mentor
 
 I am tracking your **${skill}** journey towards becoming a **${goal}**.
 

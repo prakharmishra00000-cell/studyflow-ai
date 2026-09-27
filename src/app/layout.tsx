@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'STUDYFLOW AI — Your AI-Powered Study System',
-  description: 'Advanced AI study planner, spaced repetition engine, and learning assistant for university and competitive exams.',
+  title: 'NEXRON AI — Learn Anything. Your Way.',
+  description: 'A Living AI Learning Roadmap & Personal Career Mentor.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

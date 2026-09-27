@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { 
   Sparkles, Sliders, Calendar, BookOpen, Layers, BarChart3, Settings, Rocket, ArrowRight 
 } from 'lucide-react';
-import { StudyFlowLogo } from '../common/StudyFlowLogo';
+import { NexronLogo } from '../common/NexronLogo';
 import { useStudyStore } from '@/lib/store/StudyContext';
 import { AdjustPlanModal } from '../common/AdjustPlanModal';
 
@@ -29,7 +29,7 @@ export const Navbar: React.FC = () => {
       <header className="border-b border-slate-800/80 bg-[#060811]/90 backdrop-blur-xl sticky top-0 z-40 px-4 lg:px-8 py-3.5 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <Link href="/">
-            <StudyFlowLogo size="md" />
+            <NexronLogo size="md" />
           </Link>
 
           {/* Active Skill & Goal Badge */}
