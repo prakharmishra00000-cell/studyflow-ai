@@ -1,56 +1,56 @@
 @import "tailwindcss";
 
 :root {
-  --background: #090d16;
+  --background: #02040a;
   --foreground: #f8fafc;
-  --card: #111827;
-  --card-border: rgba(255, 255, 255, 0.08);
-  --primary: #6366f1;
-  --accent-cyan: #06b6d4;
-  --accent-purple: #8b5cf6;
+  --card: #070c17;
+  --card-border: rgba(6, 182, 212, 0.2);
+  --primary: #06b6d4;
+  --accent-cyan: #22d3ee;
+  --cyan-glow: rgba(6, 182, 212, 0.25);
 }
 
 body {
-  background-color: #090d16;
+  background-color: #02040a;
   color: #f8fafc;
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
   min-height: 100vh;
 }
 
-/* Glassmorphism Surface Utility */
+/* Glassmorphism Surface Utility - Cyan Black Theme */
 .glass-panel {
-  background: rgba(17, 24, 39, 0.7);
+  background: rgba(7, 12, 23, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
 }
 
 .glass-card {
-  background: linear-gradient(135deg, rgba(23, 31, 50, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+  background: linear-gradient(135deg, rgba(10, 16, 30, 0.9) 0%, rgba(5, 8, 16, 0.95) 100%);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.8);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-card:hover {
-  border-color: rgba(99, 102, 241, 0.3);
-  box-shadow: 0 8px 30px -4px rgba(99, 102, 241, 0.15);
+  border-color: rgba(6, 182, 212, 0.5);
+  box-shadow: 0 8px 30px -4px rgba(6, 182, 212, 0.25);
 }
 
 .glass-card-active {
-  background: linear-gradient(135deg, rgba(30, 27, 75, 0.7) 0%, rgba(17, 24, 39, 0.9) 100%);
-  border: 1px solid rgba(129, 140, 248, 0.35);
-  box-shadow: 0 0 25px 0 rgba(99, 102, 241, 0.25);
+  background: linear-gradient(135deg, rgba(8, 28, 44, 0.85) 0%, rgba(4, 10, 20, 0.95) 100%);
+  border: 1px solid rgba(34, 211, 238, 0.45);
+  box-shadow: 0 0 25px 0 rgba(6, 182, 212, 0.3);
 }
 
-/* Recommendation Hero Gradient Card */
+/* Recommendation Hero Gradient Card - Cyan Black Neon */
 .ai-recommendation-card {
-  background: linear-gradient(135deg, rgba(30, 27, 75, 0.85) 0%, rgba(15, 23, 42, 0.95) 50%, rgba(14, 116, 144, 0.25) 100%);
-  border: 1px solid rgba(99, 102, 241, 0.4);
-  box-shadow: 0 10px 40px -10px rgba(99, 102, 241, 0.3);
+  background: linear-gradient(135deg, rgba(8, 28, 44, 0.9) 0%, rgba(5, 10, 20, 0.95) 50%, rgba(6, 182, 212, 0.2) 100%);
+  border: 1px solid rgba(6, 182, 212, 0.45);
+  box-shadow: 0 10px 40px -10px rgba(6, 182, 212, 0.3);
 }
 
 /* Custom Scrollbar */
@@ -58,23 +58,16 @@ body {
   width: 6px;
   height: 6px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #090d16;
+  background: #02040a;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: #0e3748;
   border-radius: 9999px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
-}
-
-/* Pulsing Glow Animation */
-@keyframes pulse-slow {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.8; }
-}
-
-.animate-pulse-slow {
-  animation: pulse-slow 3s infinite ease-in-out;
+  background: #06b6d4;
 }
