@@ -1,195 +1,184 @@
-export type ExamType = 
-  | 'University Exam'
-  | 'SSC'
-  | 'Banking'
-  | 'UPSC'
-  | 'GATE'
-  | 'NEET'
-  | 'JEE'
-  | 'Certification'
-  | 'Other';
+export type CurrentLevel = 'Beginner' | 'Basic' | 'Intermediate' | 'Advanced' | 'Expert';
 
-export type PreparationLevel = 
-  | 'Starting from zero'
-  | 'Beginner'
-  | 'Intermediate'
-  | 'Mostly prepared'
-  | 'Revision only';
+export type GoalType = 
+  | 'Learn the Skill'
+  | 'Become Job Ready'
+  | 'Build Projects'
+  | 'Get Freelance Ready'
+  | 'Prepare for Interviews'
+  | 'Career Transition'
+  | 'Master the Skill'
+  | 'Exam Preparation'
+  | 'Build a Portfolio'
+  | 'Data Analyst'
+  | 'Backend Developer'
+  | 'Automation Specialist'
+  | 'Data Scientist'
+  | string;
 
-export type EnergyLevel = 'low' | 'normal' | 'high';
-export type PriorityLevel = 'Critical' | 'High' | 'Medium' | 'Low';
-export type RevisionRisk = 'Fresh' | 'Due Soon' | 'Needs Revision' | 'High Risk';
-export type SessionCompletion = 'completed' | 'partially' | 'skipped';
-export type UnderstandingRating = 'poor' | 'okay' | 'good' | 'excellent';
+export type DurationOption = '30 Days' | '2 Months' | '3 Months' | '6 Months' | '9 Months' | '1 Year' | string;
+export type TimeDedicatedOption = '30 min' | '1 hr' | '1.5 hr' | '2 hr' | '3 hr' | '4 hr+' | string;
+export type LearningMode = '🎓 Structured Learning' | '⚡ Fast Track' | '🧠 Deep Learning' | '💼 Job Ready' | '🛠 Project First';
+export type TopicPriority = '🔴 Essential' | '🟡 Important' | '🔵 Optional' | '🟣 Advanced';
 
-// Learning Brain State
-export type BrainState = 'Mastered' | 'Strong' | 'Learning' | 'Needs Practice' | 'Needs Review' | 'Not Started';
-
-// Teacher Modes
-export type TeacherMode = 'explainer' | 'examiner' | 'socratic' | 'solver' | 'coach';
-
-export interface UserProfile {
-  id: string;
-  name: string;
-  exam: string;
-  examType: ExamType;
-  examDate: string; // YYYY-MM-DD
-  dailyStudyHours: number;
-  preparationLevel: PreparationLevel;
-  strongSubjects: string[];
-  weakSubjects: string[];
-  streak: number;
-  xp: number;
-  level: number;
-  badges: Badge[];
-  hasCompletedOnboarding: boolean;
-  teacherMode?: TeacherMode;
-}
-
-export interface Badge {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  unlockedAt?: string;
-}
-
-export interface Subject {
-  id: string;
-  name: string;
-  priority: PriorityLevel;
-  color: string;
-  icon?: string;
-}
-
-export interface Topic {
-  id: string;
-  subjectId: string;
-  subjectName: string;
-  name: string;
-  importance: number; // 1-10
-  difficulty: number; // 1-5
-  mastery: number; // 0-100%
-  brainState?: BrainState;
-  lastStudied?: string;
-  nextRevision?: string;
-  revisionRisk: RevisionRisk;
-  mistakeCount: number;
-  totalTimeSpentMinutes: number;
-  summaryNote?: string;
-}
-
-export interface Quiz {
-  id: string;
-  topicId: string;
-  topicName: string;
-  questions: QuizQuestion[];
-}
-
-export interface Recommendation {
-  topicId: string;
-  topicName: string;
-  subjectId: string;
-  subjectName: string;
-  priority: PriorityLevel;
-  recommendedDurationMinutes: number;
-  reason: string;
-  detailedReasons: string[];
-  sessionBreakdown: {
-    phase: string;
-    durationMinutes: number;
-    action: string;
-  }[];
-}
-
-export interface StudyPlanTask {
-  id: string;
-  subjectId: string;
-  subjectName: string;
-  topicId: string;
-  topicName: string;
-  estimatedMinutes: number;
-  priority: PriorityLevel;
-  activityType: 'Concept' | 'Practice' | 'Recall' | 'Revision' | 'Diagnostic';
-  status: 'pending' | 'completed' | 'skipped';
-  scheduledTime?: string;
-}
-
-export interface DailyPlan {
-  date: string;
-  label: string;
-  tasks: StudyPlanTask[];
-  isAdjusted?: boolean;
-}
-
-export interface QuizQuestion {
-  id: string;
-  text: string;
-  type: 'mcq' | 'tf' | 'short' | 'numerical';
-  options?: string[];
-  correctAnswer: string;
-  explanation: string;
-}
-
-export interface Mistake {
-  id: string;
-  quizId?: string;
-  subjectId: string;
-  subjectName: string;
-  topicId: string;
-  topicName: string;
-  questionText: string;
-  userAnswer: string;
-  correctAnswer: string;
-  explanation: string;
-  attemptsCount: number;
-  dateAdded: string;
-  resolved: boolean;
-}
-
-export interface Commitment {
+export interface ResourceItem {
   id: string;
   title: string;
-  category: 'college' | 'coaching' | 'work' | 'gym' | 'travel' | 'sleep' | 'other';
-  startTime: string;
-  endTime: string;
-  durationHours: number;
+  url: string;
+  category: '📚 Documentation' | '🎥 Video' | '📝 Articles' | '🧪 Practice' | '💻 Coding Platforms' | '📖 Books' | '🎯 Projects';
+  type: 'Primary' | 'Practice' | 'Reference';
+  whyThisResource: string;
 }
 
-export interface SyllabusItem {
-  subject: string;
-  unit: string;
-  topics: string[];
-}
-
-export interface ConceptNode {
+export interface RoadmapTopic {
   id: string;
-  label: string;
-  parentId?: string;
+  name: string;
+  priority: TopicPriority;
+  estimatedMinutes: number;
+  category: string;
+  status: 'pending' | 'in_progress' | 'completed' | 'skipped';
+  mastery: number; // 0 - 100
+  masteryLevel: 'Awareness' | 'Beginner' | 'Developing' | 'Proficient' | 'Strong'; // 0-20, 21-40, 41-60, 61-80, 81-100
   description: string;
-  formula?: string;
-  examples?: string[];
-  mastery: number;
-  brainState: BrainState;
+  resources: ResourceItem[];
 }
 
-export interface ProgressiveHint {
-  hint1: string; // Conceptual clue
-  hint2: string; // Formula/concept
-  hint3: string; // Strategy/approach
-  stepByStep: string; // Walkthrough
-  answer: string; // Full solution
+export interface ProjectStep {
+  stepNumber: number;
+  title: string;
+  description: string;
+  estimatedMinutes?: number;
 }
 
-export interface ExamReadiness {
-  percentage: number;
-  strongSubjects: string[];
-  improvingSubjects: string[];
-  needsAttentionSubjects: string[];
-  criticalTopics: string[];
-  nextBestAction: {
-    topicName: string;
-    actionText: string;
-    recommendedDuration: number;
-  };
+export interface RoadmapProject {
+  id: string;
+  name: string;
+  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  skillsPracticed: string[];
+  estimatedTime: string;
+  prerequisites: string[];
+  featuresToBuild: string[];
+  suggestedTechStack: string[];
+  portfolioValue: string;
+  extensionIdeas: string[];
+  steps?: ProjectStep[];
+  isCompleted?: boolean;
+}
+
+export interface RoadmapMilestone {
+  id: string;
+  monthNumber: number;
+  title: string;
+  description: string;
+  badge: string;
+  isCompleted: boolean;
+  status: 'upcoming' | 'in_progress' | 'achieved';
+}
+
+export interface RoadmapModule {
+  id: string;
+  monthNumber: number;
+  weekNumber: number;
+  title: string;
+  status: 'upcoming' | 'active' | 'completed';
+  topics: RoadmapTopic[];
+  projects?: RoadmapProject[];
+}
+
+export interface RoadmapMonth {
+  monthNumber: number;
+  title: string;
+  badgeColor: 'emerald' | 'amber' | 'cyan' | 'purple' | 'indigo';
+  status: 'active' | 'upcoming' | 'completed';
+  weeks: RoadmapModule[];
+}
+
+export interface RoadmapOverview {
+  skill: string;
+  totalDuration: DurationOption;
+  dailyStudyTime: TimeDedicatedOption;
+  estimatedTotalHours: number;
+  currentLevel: CurrentLevel;
+  targetLevel: string;
+  careerGoal: GoalType;
+  modulesCount: number;
+  projectsCount: number;
+  milestonesCount: number;
+  learningMode: LearningMode;
+}
+
+export interface ActionableTask {
+  id: string;
+  topicId?: string;
+  timeSlot: string; // e.g. "09:00 - 09:30"
+  icon: string;
+  title: string;
+  category: string;
+  estimatedMinutes: number;
+  status: 'pending' | 'completed' | 'skipped';
+  priority: TopicPriority;
+}
+
+export interface DailyPlanner {
+  dayNumber: number;
+  date: string;
+  availableHours: string;
+  progressPercentage: number;
+  tasks: ActionableTask[];
+}
+
+export interface ReplanningRecord {
+  changedAt: string;
+  reason: string;
+  beforeSummary: string;
+  afterSummary: string;
+}
+
+export interface UserRoadmap {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  overview: RoadmapOverview;
+  months: RoadmapMonth[];
+  projects: RoadmapProject[];
+  milestones: RoadmapMilestone[];
+  dailyPlan: DailyPlanner;
+  completedTopicIds: string[];
+  completedProjectIds: string[];
+  totalHoursStudied: number;
+  streakDays: number;
+  missedDaysCount: number;
+  replanningHistory: ReplanningRecord[];
+}
+
+export interface UserInputs {
+  skill: string;
+  dailyHours: TimeDedicatedOption;
+  currentLevel: CurrentLevel;
+  goal: GoalType;
+  duration: DurationOption;
+  learningMode?: LearningMode;
+}
+
+export type RoadmapChangeType = 
+  | 'more_time' 
+  | 'less_time' 
+  | 'missed_days' 
+  | 'change_goal' 
+  | 'change_duration' 
+  | 'finish_earlier' 
+  | 'need_practice';
+
+export interface AIRoadmapRecommendation {
+  id: string;
+  changeType: RoadmapChangeType;
+  title: string;
+  recommendationText: string;
+  reasons: string[];
+  beforeSummary: string;
+  afterSummary: string;
+  removedModules: string[];
+  addedModules: string[];
+  compressedModules: string[];
+  proposedRoadmap: UserRoadmap;
 }

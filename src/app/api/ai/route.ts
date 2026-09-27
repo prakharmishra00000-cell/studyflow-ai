@@ -1,59 +1,23 @@
 import { NextResponse } from 'next/server';
 import { StudyAI } from '@/lib/ai/gemini';
 
-export const maxDuration = 60;
-export const dynamic = 'force-dynamic';
-
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { action, prompt, mode, context, subjectName, topicName, questionCount, difficulty, rawText, paperText, subjects, examName, questionText, userAnswer } = body;
+    const { action, prompt, context, project } = body;
 
-    const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
-
-    if (action === 'teacherRespond') {
-      const reply = await StudyAI.teacherRespond(prompt, mode || 'explainer', context, apiKey);
+    if (action === 'mentorRespond') {
+      const reply = await StudyAI.mentorRespond(prompt, context);
       return NextResponse.json({ reply });
     }
 
-    if (action === 'generateHints') {
-      const hints = await StudyAI.generateHints(questionText, userAnswer);
-      return NextResponse.json({ hints });
+    if (action === 'generateProjectPlan') {
+      const steps = await StudyAI.generateProjectPlan(project);
+      return NextResponse.json({ steps });
     }
 
-    if (action === 'generateConceptMap') {
-      const nodes = await StudyAI.generateConceptMap(subjectName, topicName);
-      return NextResponse.json({ nodes });
-    }
-
-    if (action === 'researchSyllabus') {
-      const syllabus = await StudyAI.researchExamSyllabus(subjects || [], examName || 'Competitive Exam');
-      return NextResponse.json({ syllabus });
-    }
-
-    if (action === 'copilot') {
-      const reply = await StudyAI.copilotRespond(prompt, context, apiKey);
-      return NextResponse.json({ reply });
-    }
-
-    if (action === 'generateQuiz') {
-      const questions = await StudyAI.generateQuiz(subjectName, topicName, questionCount, difficulty);
-      return NextResponse.json({ questions });
-    }
-
-    if (action === 'extractSyllabus') {
-      const syllabus = await StudyAI.extractSyllabus(rawText, apiKey);
-      return NextResponse.json({ syllabus });
-    }
-
-    if (action === 'analyzePYQ') {
-      const analysis = await StudyAI.analyzePYQ(paperText);
-      return NextResponse.json({ analysis });
-    }
-
-    return NextResponse.json({ error: 'Invalid action requested' }, { status: 400 });
+    return NextResponse.json({ status: 'ok' });
   } catch (error: any) {
-    console.error('API /api/ai error:', error);
-    return NextResponse.json({ error: error?.message || 'Server error processing request' }, { status: 500 });
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

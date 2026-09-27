@@ -1,5 +1,5 @@
 import { GoogleGenAI } from '@google/genai';
-import { SyllabusItem, QuizQuestion, TeacherMode, ProgressiveHint, ConceptNode } from '../types';
+import { UserRoadmap, RoadmapProject, ProjectStep } from '../types';
 
 export class StudyAI {
   private static getClient(apiKey?: string): GoogleGenAI | null {
@@ -30,208 +30,158 @@ export class StudyAI {
     return null;
   }
 
-  // 1. Teacher Mode Persona Assistant
-  static async teacherRespond(
-    prompt: string,
-    mode: TeacherMode = 'explainer',
-    context?: string,
+  /**
+   * AI Mentor Assistant (Context-Aware Learning Companion)
+   */
+  static async mentorRespond(
+    userPrompt: string,
+    roadmapContext?: UserRoadmap | null,
     apiKey?: string
   ): Promise<string> {
-    const serverResult = await this.callServerApi('teacherRespond', { prompt, mode, context });
+    const serverResult = await this.callServerApi('mentorRespond', { prompt: userPrompt, context: roadmapContext });
     if (serverResult?.reply) return serverResult.reply;
 
-    const teacherPrompts: Record<TeacherMode, string> = {
-      explainer: 'You are THE EXPLAINER teacher. Focus on simple, crystal-clear explanations, real-world analogies, step-by-step breakdowns, and intuitive summaries.',
-      examiner: 'You are THE EXAMINER teacher. Focus on exam-style practice questions first, minimal fluff, strict time-awareness, and probing follow-up questions.',
-      socratic: 'You are THE SOCRATIC TUTOR. DO NOT give the direct answer immediately. Answer with 2-3 guiding questions that lead the student to discover the solution independently.',
-      solver: 'You are THE PROBLEM SOLVER teacher. Focus strictly on numericals: Given Data, Formula Selection, Unit Conversions, Step-by-Step Calculation, Final Answer, and Error Checking.',
-      coach: 'You are THE EXAM COACH. Focus on high-yield concepts, rapid active recall, time management, and motivating feedback without ever shaming the student.'
-    };
+    const skill = roadmapContext?.overview.skill || 'Python';
+    const goal = roadmapContext?.overview.careerGoal || 'Data Analyst';
+    const dailyHours = roadmapContext?.overview.dailyStudyTime || '2 hr';
+    const tasks = roadmapContext?.dailyPlan.tasks || [];
+    const pendingTask = tasks.find(t => t.status === 'pending')?.title || 'Python Data Structures';
+
+    const ai = this.getClient(apiKey);
+    if (ai) {
+      try {
+        const contextPrompt = `You are STUDYFLOW AI, an intelligent personal AI learning mentor.
+User's Current Roadmap Context:
+- Active Skill: ${skill}
+- Career Goal: ${goal}
+- Daily Study Time: ${dailyHours}
+- Today's Primary Pending Task: ${pendingTask}
+- Overall Progress: ${roadmapContext?.dailyPlan.progressPercentage || 40}%
+
+User's Question: "${userPrompt}"
+
+Instructions:
+1. Provide a direct, encouraging, and actionable response tailored specifically to their roadmap and goal.
+2. Use clear formatting with bullet points and bold highlights.
+3. Be supportive, concise, and focused on practical progress.`;
+
+        const response = await ai.models.generateContent({
+          model: 'gemini-2.5-flash',
+          contents: contextPrompt
+        });
+        if (response.text) return response.text;
+      } catch (err) {
+        console.warn('Gemini AI mentor call failed:', err);
+      }
+    }
+
+    // Heuristic contextual fallback responses for key questions
+    const qLower = userPrompt.toLowerCase();
+
+    if (qLower.includes('what should i study today')) {
+      return `### 🎯 Your Recommended Study Focus Today
+
+Based on your **${skill} → ${goal}** roadmap:
+
+1. **Primary Focus**: **${pendingTask}** (30 min)
+2. **Next Step**: Watch recommended video tutorial & review documentation.
+3. **Practice**: Solve 3 hands-on coding exercises.
+
+*Tip: Complete this task today to maintain your streak!*`;
+    }
+
+    if (qLower.includes('don\'t understand') || qLower.includes('explain this') || qLower.includes('beginner')) {
+      return `### 💡 Beginner-Friendly Explanation
+
+Here is the simple, intuitive way to understand **${skill}**:
+
+- **Analogy**: Imagine learning a language where grammar is syntax, and words are functions.
+- **Key Takeaway**: Start by writing small 2-line scripts before building complex applications.
+- **Rule of Thumb**: Don't memorize code; practice predicting what the code does line by line!`;
+    }
+
+    if (qLower.includes('practice questions') || qLower.includes('quiz')) {
+      return `### 🧪 AI Practice Challenge: ${skill}
+
+**Question 1**: What is the difference between a mutable and immutable data structure in ${skill}?
+- **A)** Lists are immutable, Tuples are mutable
+- **B)** Lists are mutable, Tuples are immutable
+- **C)** Both are mutable
+- **D)** Neither can be modified
+
+*Hint: Try creating a list \`[1, 2]\` and mutating index 0!*`;
+    }
+
+    if (qLower.includes('falling behind') || qLower.includes('missed')) {
+      return `### ⚙️ Don't Panic — Let's Adapt Your Roadmap!
+
+You don't need to study 8 hours to catch up. 
+Click the **⚙️ Adjust Plan** button on your dashboard to select **"I missed some days"**. 
+
+I will automatically redistribute your remaining topics smoothly across your remaining timeline so your daily workload increases by only 15 minutes!`;
+    }
+
+    if (qLower.includes('shorten') || qLower.includes('fast track')) {
+      return `### ⚡ Fast-Tracking Your Roadmap
+
+If you want to complete **${skill}** in a shorter timeframe:
+1. Open **⚙️ Adjust Plan** → Select **"I want to finish earlier"**.
+2. We'll activate **Fast Track Mode ⚡**, focusing 100% on **🔴 Essential** topics and core portfolio projects while skipping non-critical theory.`;
+    }
+
+    if (qLower.includes('sql before pandas') || qLower.includes('order')) {
+      return `### 🧠 Curriculum Order Recommendation
+
+For a **${goal}** career path:
+1. **Learn Python Fundamentals & Data Structures** first.
+2. **Learn Pandas & NumPy** next to analyze tabular data in memory.
+3. **Learn SQL** immediately after to query relational databases.
+
+*Yes! Learning Pandas gives you great intuition for how tabular data works, making SQL JOINs and GROUP BY queries much easier to master!*`;
+    }
+
+    return `### 🤖 STUDYFLOW AI Mentor
+
+I am tracking your **${skill}** journey towards becoming a **${goal}**.
+
+- **Current Progress**: You're on track!
+- **Today's Target**: ${pendingTask}
+
+How can I help you master this topic or adjust your plan today?`;
+  }
+
+  /**
+   * Generates custom project breakdown steps using Gemini or fallback
+   */
+  static async generateProjectPlan(project: RoadmapProject, apiKey?: string): Promise<ProjectStep[]> {
+    const serverResult = await this.callServerApi('generateProjectPlan', { project });
+    if (serverResult?.steps && Array.isArray(serverResult.steps)) return serverResult.steps;
 
     const ai = this.getClient(apiKey);
     if (ai) {
       try {
         const response = await ai.models.generateContent({
           model: 'gemini-2.5-flash',
-          contents: `${teacherPrompts[mode]}
-${context ? `Student Context: ${context}` : ''}
-Question/Prompt: ${prompt}`,
-        });
-        if (response.text) return response.text;
-      } catch (err) {
-        console.warn('Gemini API call failed:', err);
-      }
-    }
-
-    // Heuristic Fallback per Teacher Mode
-    if (mode === 'socratic') {
-      return `### 🧠 Socratic Guidance
-
-Before solving **"${prompt}"**, let's reason through this together:
-
-1. What is the fundamental conservation law or principle governing this system?
-2. How does the initial state compare to the final state?
-3. If temperature remains constant, what happens to the internal energy?
-
-*Reply with your thoughts to these 3 questions!*`;
-    }
-
-    if (mode === 'solver') {
-      return `### 🧮 Problem Solver Walkthrough
-
-#### 1. Given Data:
-- System state parameters identified.
-- Units converted to standard SI values.
-
-#### 2. Governing Formula:
-$$\\Delta S = \\int \\frac{dQ_{rev}}{T}$$
-
-#### 3. Step-by-Step Calculation:
-- Substitute values into equation.
-- Evaluate integral boundary conditions.
-
-#### 4. Final Answer & Unit Check:
-$$\\text{Result} = 0.456 \\text{ kJ/K}$$`;
-    }
-
-    return `### 🧑🏫 Explainer Breakdown
-
-Here is a clear breakdown for **"${prompt}"**:
-
-1. **Core Idea**: Master the basic definition first before attempting numerical problems.
-2. **Everyday Analogy**: Imagine heat flowing naturally from a hot tea cup to cool room air.
-3. **Formula**:
-   $$\\Delta S = \\frac{Q}{T}$$
-4. **Active Recall**: Can you state the Second Law of Thermodynamics in your own words?`;
-  }
-
-  // 2. Progressive "I'm Stuck" Hint Generator
-  static async generateHints(questionText: string, userAnswer?: string): Promise<ProgressiveHint> {
-    const serverResult = await this.callServerApi('generateHints', { questionText, userAnswer });
-    if (serverResult?.hints) return serverResult.hints;
-
-    const ai = this.getClient();
-    if (ai) {
-      try {
-        const response = await ai.models.generateContent({
-          model: 'gemini-2.5-flash',
-          contents: `Generate progressive learning hints for this question: "${questionText}".
-Return JSON schema:
-{
-  "hint1": "Small conceptual clue without giving away formula.",
-  "hint2": "Relevant formula or equation.",
-  "hint3": "Approach strategy and initial substitution.",
-  "stepByStep": "Guided 3-step walkthrough.",
-  "answer": "Complete final solution."
-}`,
+          contents: `Generate a 5-step detailed implementation plan for this project: "${project.name}" (Difficulty: ${project.difficulty}, Tech Stack: ${project.suggestedTechStack.join(', ')}).
+Return valid JSON array of objects:
+[
+  { "stepNumber": 1, "title": "...", "description": "...", "estimatedMinutes": 45 }
+]`
         });
         const text = response.text || '';
-        const match = text.match(/\{[\s\S]*\}/);
+        const match = text.match(/\[[\s\S]*\]/);
         if (match) return JSON.parse(match[0]);
       } catch (err) {
-        console.warn('Hint generation failed:', err);
+        console.warn('Gemini project plan generation failed:', err);
       }
     }
 
-    return {
-      hint1: '💡 Conceptual Clue: Start by identifying whether heat is added to or rejected from the system.',
-      hint2: '📐 Relevant Formula: Use $\\Delta S = \\int \\frac{dQ_{rev}}{T}$ or Carnot efficiency $\\eta = 1 - T_L/T_H$.',
-      hint3: '🧩 Strategy: Convert temperatures to Kelvin (K = °C + 273.15) before substituting.',
-      stepByStep: '1. Identify T_high = 500 K and T_low = 300 K.\n2. Compute Carnot efficiency: eta = 1 - 300/500 = 0.40.\n3. Multiply input heat by efficiency.',
-      answer: 'Maximum work output = 400 kJ. Net entropy change of universe for Carnot cycle = 0.'
-    };
-  }
-
-  // 3. Interactive Concept Map Generator
-  static async generateConceptMap(subjectName: string, topicName: string): Promise<ConceptNode[]> {
-    const serverResult = await this.callServerApi('generateConceptMap', { subjectName, topicName });
-    if (serverResult?.nodes && Array.isArray(serverResult.nodes)) return serverResult.nodes;
-
     return [
-      {
-        id: 'node-1',
-        label: `${subjectName} Overview`,
-        description: `Core structural foundation of ${subjectName}.`,
-        mastery: 80,
-        brainState: 'Strong'
-      },
-      {
-        id: 'node-2',
-        label: 'System & Boundaries',
-        parentId: 'node-1',
-        description: 'Open, Closed, and Isolated Thermodynamic Systems.',
-        formula: 'Q - W = \\Delta U',
-        examples: ['Piston cylinder', 'Turbine nozzle'],
-        mastery: 75,
-        brainState: 'Strong'
-      },
-      {
-        id: 'node-3',
-        label: 'First Law of Thermodynamics',
-        parentId: 'node-2',
-        description: 'Conservation of energy principle applied to closed & open systems.',
-        formula: 'dQ = dU + dW',
-        examples: ['Constant volume heating'],
-        mastery: 65,
-        brainState: 'Learning'
-      },
-      {
-        id: 'node-4',
-        label: topicName,
-        parentId: 'node-3',
-        description: 'Second law & entropy generation in irreversible processes.',
-        formula: '\\Delta S = \\int \\frac{dQ_{rev}}{T}',
-        examples: ['Free expansion', 'Heat exchanger'],
-        mastery: 42,
-        brainState: 'Needs Review'
-      }
+      { stepNumber: 1, title: 'Environment Setup & Dependencies', description: `Configure ${project.suggestedTechStack.join(', ')} environment and initialize repository.`, estimatedMinutes: 30 },
+      { stepNumber: 2, title: 'Data Pipeline & Business Logic', description: `Build core modules for ${project.name}.`, estimatedMinutes: 90 },
+      { stepNumber: 3, title: 'UI / Visualization / API Integration', description: `Implement features: ${project.featuresToBuild.slice(0, 2).join(' & ')}.`, estimatedMinutes: 120 },
+      { stepNumber: 4, title: 'Validation & Error Handling', description: 'Test edge cases and refine error states.', estimatedMinutes: 60 },
+      { stepNumber: 5, title: 'Portfolio Packaging & Deployment', description: 'Write README, document architecture, and host online.', estimatedMinutes: 45 }
     ];
-  }
-
-  // Legacy compatibility helpers
-  static async copilotRespond(prompt: string, context?: string, apiKey?: string): Promise<string> {
-    return this.teacherRespond(prompt, 'explainer', context, apiKey);
-  }
-
-  static async generateQuiz(subjectName: string, topicName: string, questionCount: number = 5, difficulty: string = 'Medium'): Promise<QuizQuestion[]> {
-    const serverResult = await this.callServerApi('generateQuiz', { subjectName, topicName, questionCount, difficulty });
-    if (serverResult?.questions && Array.isArray(serverResult.questions)) return serverResult.questions;
-
-    return [
-      {
-        id: `q-${Date.now()}-1`,
-        text: `In ${subjectName} (${topicName}), what is the primary fundamental principle to evaluate first?`,
-        type: 'mcq',
-        options: ['Conservation laws', 'Boundary conditions', 'Initial state parameters', 'Empirical coefficients'],
-        correctAnswer: 'Conservation laws',
-        explanation: 'Conservation principles form the foundation of problem solving across core engineering and scientific domains.'
-      }
-    ];
-  }
-
-  static async extractSyllabus(rawText: string, apiKey?: string): Promise<SyllabusItem[]> {
-    const serverResult = await this.callServerApi('extractSyllabus', { rawText, apiKey });
-    if (serverResult?.syllabus) return serverResult.syllabus;
-    return [{ subject: 'General Science', unit: 'Unit 1: Fundamentals', topics: ['Definitions', 'Practice', 'Revision'] }];
-  }
-
-  static async researchExamSyllabus(subjects: string[], examName: string) {
-    const serverResult = await this.callServerApi('researchSyllabus', { subjects, examName });
-    if (serverResult?.syllabus) return serverResult.syllabus;
-    return subjects.map(sub => ({
-      subject: sub,
-      topics: [
-        { name: `${sub} — Fundamental Concepts & Definitions`, importance: 9, difficulty: 3 },
-        { name: `${sub} — High-Yield Numerical Problems`, importance: 8, difficulty: 4 },
-        { name: `${sub} — Advanced Applications & Analysis`, importance: 7, difficulty: 4 },
-        { name: `${sub} — Previous Year Questions & Revision`, importance: 9, difficulty: 3 }
-      ]
-    }));
-  }
-
-  static async analyzePYQ(paperText: string) {
-    const serverResult = await this.callServerApi('analyzePYQ', { paperText });
-    if (serverResult?.analysis) return serverResult.analysis;
-    return { subject: 'General Exam', highYieldTopics: [{ topic: 'Core Fundamentals', frequency: 'Very High', questionCount: 8, typeRatio: '60% Numerical, 40% Theory' }], insights: 'Analysis shows 62% weightage on core problems.' };
   }
 }
