@@ -1,40 +1,20 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { 
-  Calendar, Clock, CheckCircle2, Flame, PlayCircle, Sparkles, AlertCircle, BookOpen 
+  Calendar, Clock, CheckCircle2, Flame, PlayCircle, Sparkles, AlertCircle 
 } from 'lucide-react';
 import { useStudyStore } from '@/lib/store/StudyContext';
 import { Navbar } from '@/components/layout/Navbar';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { AIMentorDrawer } from '@/components/common/AIMentorDrawer';
-import StudyResourcesModal from '@/components/common/StudyResourcesModal';
-import { RoadmapTopic } from '@/lib/types';
 
 export default function TodayPlannerPage() {
   const { roadmap, completeTask } = useStudyStore();
-  const [activeResourceTopic, setActiveResourceTopic] = useState<RoadmapTopic | null>(null);
 
   if (!roadmap) return null;
 
-  const { dailyPlan, overview, months } = roadmap;
-  const allTopics = months.flatMap(m => m.weeks).flatMap(w => w.topics);
-
-  const openResourcesForTask = (taskTitle: string) => {
-    const matchedTopic = allTopics.find(t => taskTitle.toLowerCase().includes(t.name.toLowerCase())) || allTopics[0] || {
-      id: 'top-curr',
-      name: taskTitle,
-      priority: '🔴 Essential',
-      estimatedMinutes: 45,
-      category: 'Core Study',
-      status: 'in_progress',
-      mastery: 50,
-      masteryLevel: 'Developing',
-      description: `Target study unit for ${overview.skill} towards ${overview.careerGoal}.`,
-      resources: []
-    };
-    setActiveResourceTopic(matchedTopic as RoadmapTopic);
-  };
+  const { dailyPlan, overview } = roadmap;
 
   return (
     <div className="min-h-screen bg-[#02040a] text-slate-100 flex flex-col justify-between selection:bg-cyan-500 selection:text-slate-950 pb-20 lg:pb-8">
@@ -123,14 +103,6 @@ export default function TodayPlannerPage() {
 
                     <div className="flex items-center gap-2 shrink-0">
                       <button
-                        onClick={() => openResourcesForTask(task.title)}
-                        className="px-3 py-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-xs font-bold transition-all flex items-center gap-1.5"
-                      >
-                        <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
-                        <span>📚 Study Resources</span>
-                      </button>
-
-                      <button
                         onClick={() => completeTask(task.id)}
                         className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                           isDone
@@ -162,7 +134,7 @@ export default function TodayPlannerPage() {
 
       <MobileNav />
       <AIMentorDrawer />
-      <StudyResourcesModal topic={activeResourceTopic} onClose={() => setActiveResourceTopic(null)} />
     </div>
   );
 }
+

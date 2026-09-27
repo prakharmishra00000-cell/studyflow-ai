@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { 
-  Sparkles, Sliders, Calendar, Clock, Target, BookOpen, 
+  Sparkles, Sliders, Calendar, Clock, Target, 
   Layers, CheckCircle2, ChevronRight, Zap
 } from 'lucide-react';
 import { useStudyStore } from '@/lib/store/StudyContext';
@@ -10,13 +10,11 @@ import { Navbar } from '@/components/layout/Navbar';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { AIMentorDrawer } from '@/components/common/AIMentorDrawer';
 import { AdjustPlanModal } from '@/components/common/AdjustPlanModal';
-import StudyResourcesModal from '@/components/common/StudyResourcesModal';
 import { RoadmapTopic, TopicPriority } from '@/lib/types';
 
 export default function RoadmapPage() {
   const { roadmap, toggleTopicStatus } = useStudyStore();
   const [selectedTopic, setSelectedTopic] = useState<RoadmapTopic | null>(null);
-  const [resourceTopic, setResourceTopic] = useState<RoadmapTopic | null>(null);
   const [isAdjustOpen, setIsAdjustOpen] = useState(false);
 
   if (!roadmap) return null;
@@ -192,14 +190,6 @@ export default function RoadmapPage() {
                                       <span className={`px-2 py-0.5 rounded text-[10px] font-extrabold uppercase border ${priorityColor(t.priority)}`}>
                                         {t.priority}
                                       </span>
-
-                                      <button
-                                        onClick={() => setResourceTopic(t)}
-                                        className="px-2.5 py-1 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 text-[11px] font-bold transition-all flex items-center gap-1"
-                                      >
-                                        <BookOpen className="w-3 h-3 text-cyan-400" />
-                                        <span>📚 Resources</span>
-                                      </button>
                                     </div>
                                   </div>
                                 );
@@ -224,7 +214,7 @@ export default function RoadmapPage() {
       <MobileNav />
       <AIMentorDrawer />
       <AdjustPlanModal isOpen={isAdjustOpen} onClose={() => setIsAdjustOpen(false)} />
-      <StudyResourcesModal topic={resourceTopic} onClose={() => setResourceTopic(null)} />
     </div>
   );
 }
+

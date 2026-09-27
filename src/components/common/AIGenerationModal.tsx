@@ -18,7 +18,7 @@ export const AIGenerationModal: React.FC<AIGenerationModalProps> = ({ isOpen, st
     'Calculating available daily study time...',
     'Structuring custom curriculum modules...',
     'Selecting level-based portfolio projects...',
-    'Curating primary & practice learning resources...',
+    'Structuring adaptive study milestones...',
     'Building your actionable daily plan...',
     'Optimizing priorities (🔴 Essential to 🔵 Optional)...'
   ];
